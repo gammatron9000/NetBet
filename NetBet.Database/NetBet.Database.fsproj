@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="DbCommon.fs" />
+    <Compile Include="BetsDb.fs" />
+    <Compile Include="FightersDb.fs" />
+    <Compile Include="MatchesDb.fs" />
+    <Compile Include="EventsDb.fs" />
+    <Compile Include="SeasonPlayersDb.fs" />
+    <Compile Include="PlayersDb.fs" />
+    <Compile Include="SeasonsDb.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.60.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetBet.Models\NetBet.Models.fsproj" />
+  </ItemGroup>
+
+</Project>
