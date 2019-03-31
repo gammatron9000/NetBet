@@ -14,7 +14,7 @@ type Bet =
         FighterID : int
         ParlayID  : Guid
         Stake     : decimal
-        Result    : BetResult Nullable
+        Result    : Nullable<BetResult>
     }
 
 
@@ -46,9 +46,9 @@ type Match =
         Fighter2ID      : int
         Fighter1Odds    : decimal
         Fighter2Odds    : decimal
-        WinnerFighterID : int Nullable
-        LoserFighterID  : int Nullable
-        IsDraw          : Boolean Nullable
+        WinnerFighterID : Nullable<int>
+        LoserFighterID  : Nullable<int>
+        IsDraw          : Nullable<Boolean>
     }
     
 [<CLIMutable>]

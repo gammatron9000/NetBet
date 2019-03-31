@@ -5,7 +5,6 @@ open DbCommon
 open DbTypes
 open System
 
-
 let getBetsForMatch matchID =
     let qp : QueryParamsID = { ID = matchID }
     DbContext.Instance.Connection.Query<Bet>(
