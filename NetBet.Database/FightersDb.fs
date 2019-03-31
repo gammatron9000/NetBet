@@ -11,14 +11,13 @@ let getFighterByID fighterID =
         SELECT ID, Name, Image, ImageLink 
         FROM dbo.Fighters
         WHERE ID = @ID""", qp)
-    |> Seq.exactlyOne
 
 let getAllFighters () = 
     DbContext.Instance.Connection.Query<Fighter>("""
         SELECT ID, Name, Image, ImageLink 
         FROM dbo.Fighters""")
 
-let createFighter (fighter: Fighter) =
+let insertFighter (fighter: Fighter) =
     DbContext.Instance.Connection.Execute("""
         IF NOT EXISTS
         ( SELECT 1

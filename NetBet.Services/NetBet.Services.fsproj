@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="SeasonService.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\NetBet.Database\NetBet.Database.fsproj" />
     <ProjectReference Include="..\NetBet.Models\NetBet.Models.fsproj" />
   </ItemGroup>

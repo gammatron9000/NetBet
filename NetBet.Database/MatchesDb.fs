@@ -10,7 +10,6 @@ let getMatchByID matchID =
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw
         FROM dbo.Matches
         WHERE ID = @ID""", qp)
-    |> Seq.exactlyOne
 
 let getMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
@@ -19,7 +18,7 @@ let getMatchesForEvent eventID =
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
 
-let createMatches (matches: Match[]) =
+let insertMatches (matches: Match[]) =
     let mutable allResults = 0
     for m in matches do 
         let queryResult = DbContext.Instance.Connection.Execute("""

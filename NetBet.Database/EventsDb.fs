@@ -10,7 +10,6 @@ let getEventById eventID =
         SELECT ID, SesaonID, Name, StartTime 
         FROM dbo.Events
         WHERE ID = @ID""", qp)
-    |> Seq.exactlyOne
 
 let getEventsForSeason seasonID =
     let qp : QueryParamsID = { ID = seasonID }
@@ -19,7 +18,7 @@ let getEventsForSeason seasonID =
         FROM dbo.Events
         WHERE SeasonID = @ID""", qp)
 
-let createEvent (evt: Event) = 
+let insertEvent (evt: Event) = 
     DbContext.Instance.Connection.Execute("""
         IF NOT EXISTS
         ( SELECT 1

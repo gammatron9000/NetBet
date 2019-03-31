@@ -9,10 +9,9 @@ let getAllSeasons () =
     
 let getSeasonById id = 
     let qp : QueryParamsID = { ID = id }
-    DbContext.Instance.Connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE ID = @ID", qp) 
-    |> Seq.exactlyOne
+    DbContext.Instance.Connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE ID = @ID", qp)
     
-let createSeason (season: Season) = 
+let insertSeason (season: Season) = 
     DbContext.Instance.Connection.Execute(
         """INSERT INTO dbo.Seasons(Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize)
            VALUES (@Name, @StartTime, @EndTime, @StartingCash, @MinimumCash, @MaxParlaySize) """, season)
