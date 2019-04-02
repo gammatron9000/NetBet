@@ -21,5 +21,8 @@ type DbContext() =
 type QueryParamsID = { ID: int }
 type QueryParamsSeasonPlayer = 
     { SeasonID: int
-      PlayerID: int
-      CurrentCash: decimal }
+      PlayerID: int }
+type QueryParamsCurrentCash =
+    { CurrentCash: decimal }
+type QueryParamsName =
+    { Name: string }

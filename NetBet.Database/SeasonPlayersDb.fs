@@ -5,7 +5,7 @@ open DbCommon
 open DbTypes
 
 
-let GetPlayersForSeason seasonID = 
+let getPlayersForSeason seasonID = 
     let qp : QueryParamsID = { ID = seasonID }
     DbContext.Instance.Connection.Query<SeasonWithPlayers>("""
         SELECT sp.SeasonID
@@ -20,11 +20,10 @@ let GetPlayersForSeason seasonID =
         INNER JOIN dbo.Seasons as s
           ON s.ID = sp.SeasonID""", qp)
           
-let AddPlayerToSeason (seasonPlayer: SeasonPlayer) =
+let addPlayerToSeason seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
-        { SeasonID = seasonPlayer.SeasonID
-          PlayerID = seasonPlayer.PlayerID
-          CurrentCash = seasonPlayer.CurrentCash }
+        { SeasonID = seasonID
+          PlayerID = playerID }
     DbContext.Instance.Connection.Execute("""
         IF NOT EXISTS
         ( SELECT 1
@@ -36,21 +35,17 @@ let AddPlayerToSeason (seasonPlayer: SeasonPlayer) =
             VALUES( @SeasonID, @PlayerID, @CurrentCash )
         END """, qp)
 
-let RemovePlayerFromSeason (seasonPlayer: SeasonPlayer) =
+let removePlayerFromSeason seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
-        { SeasonID = seasonPlayer.SeasonID
-          PlayerID = seasonPlayer.PlayerID
-          CurrentCash = seasonPlayer.CurrentCash}
+        { SeasonID = seasonID
+          PlayerID = playerID } 
     DbContext.Instance.Connection.Execute("""
         DELETE FROM dbo.SeasonPlayers
         WHERE SeasonID = @SeasonID
         AND PlayerID = @PlayerID""", qp)
-
-let UpdateCurrentCash (sp: SeasonPlayer) =
-    let qp : QueryParamsSeasonPlayer =
-        { SeasonID = sp.SeasonID
-          PlayerID = sp.PlayerID
-          CurrentCash = sp.CurrentCash }
+        
+let updateCurrentCash (sp: SeasonPlayer) =
+    let qp : QueryParamsCurrentCash = { CurrentCash = sp.CurrentCash }
     DbContext.Instance.Connection.Execute("""
         UPDATE dbo.SeasonPlayers
         SET CurrentCash = @CurrentCash

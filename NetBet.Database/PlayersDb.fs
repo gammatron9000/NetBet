@@ -10,12 +10,12 @@ let getAllPlayers() =
 let getPlayerByID id = 
     let qp : QueryParamsID = { ID = id }
     DbContext.Instance.Connection.Query<Player>("SELECT ID, Name FROM dbo.Players WHERE ID = @ID", qp)
-    |> Seq.exactlyOne
 
-let createPlayer (player: Player) = 
+let insertPlayer name = 
+    let qp : QueryParamsName = { Name = name }
     DbContext.Instance.Connection.Execute(
         """INSERT INTO dbo.Players(Name)
-           VALUES (@Name)""", player)
+           VALUES (@Name)""", qp)
 
 let updatePlayer (player: Player) = 
     DbContext.Instance.Connection.Execute("""

@@ -22,20 +22,19 @@ let getBetsForEvent eventID =
 let getBetsForPlayerForSeason playerID seasonID =
     let qp : QueryParamsSeasonPlayer = 
         { SeasonID = seasonID
-          PlayerID = playerID
-          CurrentCash = 0M }
+          PlayerID = playerID }
     DbContext.Instance.Connection.Query<Bet>(
         """SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result
            FROM dbo.Bets
            WHERE SeasonID = @SeasonID
              AND PlayerID = @PlayerID""", qp)
 
-let createBet (bet: Bet) =
+let insertBet (bet: Bet) =
     DbContext.Instance.Connection.Execute("""
         INSERT INTO dbo.Bets (SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result)
         VALUES (@SeasonID, @EventID, @MatchID, @PlayerID, @FighterID, @ParlayID, @Stake, NULL)""", bet)
 
-let resolveBet (bet: Bet) =
+let updateBet (bet: Bet) =
     DbContext.Instance.Connection.Execute("""
         UPDATE dbo.Bets
         SET Result = @Result
@@ -44,24 +43,4 @@ let resolveBet (bet: Bet) =
           AND MatchID   = @MatchID
           AND PlayerID  = @PlayerID
           AND FighterID = @FighterID""", bet)
-
-let resolveAllBetsForMatch (m: Match) =
-    if m.WinnerFighterID = Nullable() && 
-       m.LoserFighterID = Nullable() &&
-       m.IsDraw = Nullable() then 
-        0
-    else 
-        let winCount = 
-            DbContext.Instance.Connection.Execute("""
-                UPDATE dbo.Bets
-                SET Result = 1
-                WHERE MatchID = @ID
-                  AND FighterID = @WinnerFighterID""", m)
-        let loseCount = 
-            DbContext.Instance.Connection.Execute("""
-                UPDATE dbo.Bets
-                SET Result = 0
-                WHERE MatchID = @ID
-                  AND (FighterID = @LoserFighterID 
-                     OR  @IsDraw = 'true')""", m)
-        winCount + loseCount
+          

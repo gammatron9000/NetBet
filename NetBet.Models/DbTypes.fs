@@ -2,7 +2,7 @@
 
 open System
 
-type BetResult = Lose = 0 | Win = 1
+type BetResult = Lose = 0 | Win = 1 | Push = 2
 
 [<CLIMutable>]
 type Bet = 
