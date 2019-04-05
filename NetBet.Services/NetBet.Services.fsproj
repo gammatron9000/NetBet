@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="BetService.fs" />
+    <Compile Include="FighterService.fs" />
+    <Compile Include="MatchService.fs" />
+    <Compile Include="EventService.fs" />
     <Compile Include="SeasonService.fs" />
   </ItemGroup>
 

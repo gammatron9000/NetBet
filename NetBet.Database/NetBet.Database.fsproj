@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="DbScripts\NetBetDB-CreateScript0.1.sql" />
+    <None Include="DbScripts\NetBetDB-CreateScript0.2.sql" />
     <Compile Include="DbCommon.fs" />
     <Compile Include="BetsDb.fs" />
     <Compile Include="FightersDb.fs" />
@@ -22,5 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NetBet.Models\NetBet.Models.fsproj" />
   </ItemGroup>
+
+  <ItemGroup />
 
 </Project>

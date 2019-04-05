@@ -4,7 +4,7 @@ open Dapper
 open DbCommon
 open DbTypes
 
-let getEventById eventID =
+let getEventByID eventID =
     let qp : QueryParamsID = { ID = eventID }
     DbContext.Instance.Connection.Query<Event>("""
         SELECT ID, SesaonID, Name, StartTime 
@@ -29,8 +29,8 @@ let insertEvent (evt: Event) =
             VALUES( @ID, @SeasonID, @Name, @StartTime)
         END""", evt)
 
-let deleteEvent (evt: Event) = 
-    let qp : QueryParamsID = { ID = evt.ID }
+let deleteEvent eventID = 
+    let qp : QueryParamsID = { ID = eventID }
     DbContext.Instance.Connection.Execute("""
         DELETE FROM dbo.Events WHERE ID = @ID""", qp)
 

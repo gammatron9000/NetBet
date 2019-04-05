@@ -18,16 +18,20 @@ let getMatchesForEvent eventID =
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
 
+let insertMatch (m: Match) =
+    DbContext.Instance.Connection.Execute("""
+        INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw)
+        VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw )""", m)
+
 let insertMatches (matches: Match[]) =
     let mutable allResults = 0
     for m in matches do 
-        let queryResult = DbContext.Instance.Connection.Execute("""
-            INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw)
-            VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw )""", m)
+        let queryResult = insertMatch m
         allResults <- allResults + queryResult
     allResults
 
-let deleteMatch (m: Match) = 
+let deleteMatch matchID = 
+    let qp : QueryParamsID = { ID = matchID }
     DbContext.Instance.Connection.Execute("""
         DELETE FROM dbo.Matches WHERE ID = @ID""", m)
 
@@ -38,3 +42,9 @@ let resolveMatch (m: Match) =
           , LoserFighterID = @LoserFighterID
           , IsDraw = @IsDraw
         WHERE ID = @ID""", m)
+
+let deleteAllMatchesForEvent eventID = 
+    let qp : QueryParamsID = { ID = eventID }
+    DbContext.Instance.Connection.Execute("""
+        DELETE FROM dbo.Matches
+        WHERE EventID = @ID""", qp)

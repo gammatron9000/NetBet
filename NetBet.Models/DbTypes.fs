@@ -2,8 +2,6 @@
 
 open System
 
-type BetResult = Lose = 0 | Win = 1 | Push = 2
-
 [<CLIMutable>]
 type Bet = 
     {
@@ -14,7 +12,7 @@ type Bet =
         FighterID : int
         ParlayID  : Guid
         Stake     : decimal
-        Result    : Nullable<BetResult>
+        Result    : Nullable<int>
     }
 
 

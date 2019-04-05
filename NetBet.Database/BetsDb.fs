@@ -3,7 +3,6 @@
 open Dapper
 open DbCommon
 open DbTypes
-open System
 
 let getBetsForMatch matchID =
     let qp : QueryParamsID = { ID = matchID }
@@ -33,14 +32,25 @@ let insertBet (bet: Bet) =
     DbContext.Instance.Connection.Execute("""
         INSERT INTO dbo.Bets (SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result)
         VALUES (@SeasonID, @EventID, @MatchID, @PlayerID, @FighterID, @ParlayID, @Stake, NULL)""", bet)
-
-let updateBet (bet: Bet) =
+        
+let deleteBet (bet: Bet) = 
     DbContext.Instance.Connection.Execute("""
-        UPDATE dbo.Bets
-        SET Result = @Result
-        WHERE SeasonID  = @SeasonID
-          AND EventID   = @EventID
-          AND MatchID   = @MatchID
-          AND PlayerID  = @PlayerID
-          AND FighterID = @FighterID""", bet)
-          
+        DELETE FROM dbo.Bets
+        WHERE SeasonID = @SeasonID
+          AND EventID = @EventID
+          AND MatchID = @MatchID
+          AND PlayerID = @PlayerID
+          AND FighterID = @FighterID
+          AND ParlayID = @ParlayID""", bet)
+
+let deleteAllBetsForEvent eventID = 
+    let qp : QueryParamsID = { ID = eventID }
+    DbContext.Instance.Connection.Execute("""
+        DELETE FROM dbo.Bets
+        WHERE EventID = @ID""", qp)
+
+let deleteAllBetsForMatch matchID =
+    let qp : QueryParamsID = { ID = matchID }
+    DbContext.Instance.Connection.Execute("""
+        DELETE FROM dbo.Bets
+        WHERE MatchID = @ID""", qp)

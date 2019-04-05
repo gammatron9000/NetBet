@@ -35,3 +35,9 @@ let updateFighter (fighter: Fighter) =
           , Image = @Image
           , ImageLink = @ImageLink
         WHERE ID = @ID""", fighter)
+
+let deleteFighter fighterID =
+    let qp : QueryParamsID = { ID = fighterID }
+    DbContext.Instance.Connection.Execute("""
+        DELETE FROM dbo.Fighters
+        WHERE ID = @ID""", qp)
