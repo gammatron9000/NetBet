@@ -6,7 +6,7 @@ open DbTypes
 let getAllSeasons() = 
     SeasonsDb.getAllSeasons() |> Seq.toArray
 
-let getSeason(seasonID) = 
+let getSeasonByID(seasonID) = 
     SeasonsDb.getSeasonById(seasonID) |> Seq.exactlyOne
 
 let createSeason (s: Season) = 
@@ -27,8 +27,11 @@ let createPlayer name =
 let changePlayerName player =
     PlayersDb.updatePlayer player
     
-let getSeasonWithPlayers(seasonID) =
+let getSeasonWithPlayers seasonID =
     SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
+
+let getSeasonPlayer seasonID playerID =
+    SeasonPlayersDb.getSeasonPlayer seasonID playerID |> Seq.exactlyOne
 
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =

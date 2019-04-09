@@ -26,3 +26,14 @@ type QueryParamsCurrentCash =
     { CurrentCash: decimal }
 type QueryParamsName =
     { Name: string }
+type QueryParamsResolveBet =
+    { SeasonID: int
+      EventID: int 
+      MatchID: int
+      FighterID: int }
+type QueryParamsParlayedBets = 
+    { SeasonID: int
+      EventID: int
+      MatchID: int
+      PlayerID: int
+      ParlayID: Nullable<Guid> }

@@ -33,7 +33,7 @@ let insertMatches (matches: Match[]) =
 let deleteMatch matchID = 
     let qp : QueryParamsID = { ID = matchID }
     DbContext.Instance.Connection.Execute("""
-        DELETE FROM dbo.Matches WHERE ID = @ID""", m)
+        DELETE FROM dbo.Matches WHERE ID = @ID""", qp)
 
 let resolveMatch (m: Match) =
     DbContext.Instance.Connection.Execute("""

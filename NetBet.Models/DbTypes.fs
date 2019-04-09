@@ -10,9 +10,23 @@ type Bet =
         MatchID   : int
         PlayerID  : int
         FighterID : int
-        ParlayID  : Guid
+        ParlayID  : Nullable<Guid>
         Stake     : decimal
         Result    : Nullable<int>
+    }
+
+[<CLIMutable>]
+type BetWithOdds = 
+    {
+        SeasonID  : int
+        EventID   : int
+        MatchID   : int
+        PlayerID  : int
+        FighterID : int
+        ParlayID  : Nullable<Guid>
+        Stake     : decimal
+        Result    : Nullable<int>
+        Odds      : decimal
     }
 
 
@@ -55,15 +69,7 @@ type Player =
         ID   : int
         Name : string
     }
-
-[<CLIMutable>]
-type SeasonPlayer = 
-    {
-        SeasonID    : int
-        PlayerID    : int
-        CurrentCash : decimal
-    }
-
+    
 [<CLIMutable>]
 type Season = 
     {
@@ -79,7 +85,7 @@ type Season =
 
 // VIEWS
 
-type SeasonWithPlayers =
+type SeasonPlayer =
     {
         SeasonID    : int
         PlayerID    : int

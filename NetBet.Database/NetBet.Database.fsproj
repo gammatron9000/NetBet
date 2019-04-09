@@ -7,6 +7,8 @@
   <ItemGroup>
     <None Include="DbScripts\NetBetDB-CreateScript0.1.sql" />
     <None Include="DbScripts\NetBetDB-CreateScript0.2.sql" />
+    <None Include="DbScripts\NetBetDB-CreateScript0.3.sql" />
+    <None Include="DbScripts\NetBetDB-CreateScript0.4.sql" />
     <Compile Include="DbCommon.fs" />
     <Compile Include="BetsDb.fs" />
     <Compile Include="FightersDb.fs" />

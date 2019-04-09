@@ -7,7 +7,7 @@ open DbTypes
 
 let getPlayersForSeason seasonID = 
     let qp : QueryParamsID = { ID = seasonID }
-    DbContext.Instance.Connection.Query<SeasonWithPlayers>("""
+    DbContext.Instance.Connection.Query<SeasonPlayer>("""
         SELECT sp.SeasonID
              , sp.PlayerID
              , s.Name as SeasonName
@@ -19,6 +19,25 @@ let getPlayersForSeason seasonID =
           ON p.ID = sp.PlayerID
         INNER JOIN dbo.Seasons as s
           ON s.ID = sp.SeasonID""", qp)
+
+let getSeasonPlayer seasonID playerID =
+    let qp : QueryParamsSeasonPlayer = 
+        { SeasonID = seasonID
+          PlayerID = playerID }
+    DbContext.Instance.Connection.Query<SeasonPlayer>("""
+        SELECT sp.SeasonID
+             , sp.PlayerID
+             , s.Name as SeasonName
+             , p.Name as PlayerName
+             , s.MinimumCash
+             , sp.CurrentCash
+        FROM dbo.SeasonPlayers as sp
+        INNER JOIN dbo.Players as p
+          ON p.ID = sp.PlayerID
+        INNER JOIN dbo.Seasons as s
+          ON s.ID = sp.SeasonID
+        WHERE sp.SeasonID = @SeasonID
+          AND sp.PlayerID = @PlayerID""", qp)
           
 let addPlayerToSeason seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
