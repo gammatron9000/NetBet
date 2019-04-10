@@ -92,12 +92,12 @@ let resolveBetWinners seasonID eventID matchID winnerFighterID =
           AND MatchID = @MatchID
           AND FighterID = @FighterID""", qp)
 
-let resolveBetLosers seasonID eventID matchID winnerFighterID =
+let resolveBetLosers seasonID eventID matchID loserFighterID =
     let qp : QueryParamsResolveBet = 
         { SeasonID = seasonID
           EventID = eventID
           MatchID = matchID
-          FighterID = winnerFighterID }
+          FighterID = loserFighterID }
     DbContext.Instance.Connection.Execute("""
         UPDATE dbo.Bets
         SET Result = 0
@@ -106,4 +106,20 @@ let resolveBetLosers seasonID eventID matchID winnerFighterID =
           AND MatchID = @MatchID
           AND FighterID = @FighterID""", qp)
 
+let resolveParlayBetLose seasonID eventID matchID playerID parlayID =
+    let qp: QueryParamsParlayedBets =
+        { SeasonID = seasonID
+          EventID  = eventID
+          MatchID  = matchID
+          PlayerID = playerID
+          ParlayID = parlayID }
+    DbContext.Instance.Connection.Execute("""
+        UPDATE dbo.Bets
+        SET Result = 0
+        WHERE SeasonID = @SeasonID
+          AND EventID  = @EventID
+          AND MatchID  = @MatchID
+          AND PlayerID = @PlayerID
+          AND ParlayID = @ParlayID
+          AND Result IS NULL""", qp)
           

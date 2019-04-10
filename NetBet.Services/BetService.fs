@@ -18,17 +18,14 @@ let getParlayedBets (b: BetWithOdds) =
     BetsDb.getParlayedBets b |> Seq.toArray
 
 let createBet bet =
-    BetsDb.insertBet bet
-    // subtract from player current cash
+    BetsDb.insertBet bet |> ignore
+    SeasonService.removePlayerMoney bet.SeasonID bet.PlayerID bet.Stake
 
 let deleteBet (bet: Bet) =
     if bet.Result = Nullable() then 
         BetsDb.deleteBet bet
     else failwithf "This bet has already been resolved and cannot be deleted"
-
-let pushBetsForMatch matchID =
-    BetsDb.pushBetsForMatch matchID
-
+    
 let calculateBetWin (stake: decimal) (odds: decimal) = 
     let raw = (stake * (odds - 1.0M))
     Math.Round(raw, 2)
@@ -44,11 +41,39 @@ let isBetWinner (b: BetWithOdds) =
         else false
     else false
 
-let resolveBets (m: Match) (s: Season) (players: SeasonPlayer[]) = 
+let areAllBetsWinOrPush (bets: BetWithOdds[]) =
+    bets |> Array.forall(fun x ->(x.Result = Nullable(BetResult.Win.Code) || x.Result = Nullable(BetResult.Push.Code)) )
+
+let pushBetsForMatch matchID =
+    BetsDb.pushBetsForMatch matchID |> ignore
+    // refund all non parlay bets
+    let betsForThisMatch = getBetsForMatch matchID
+    for b in betsForThisMatch do
+        let refund =
+            if b.ParlayID = Nullable() then
+                b.Stake
+            else
+                let parlayedBets = getParlayedBets b
+                match parlayedBets |> areAllBetsWinOrPush with
+                | true -> b.Stake
+                | false -> 0.0M
+        
+        match refund with 
+        | 0.0M -> ()
+        | _ -> SeasonService.givePlayerMoney b.SeasonID b.PlayerID refund
+    ()
+
+let resolveBets (m: Match) (seasonID: int) = 
+    BetsDb.resolveBetWinners seasonID m.EventID m.ID (denullInt(m.WinnerFighterID)) |> ignore
+    BetsDb.resolveBetLosers seasonID m.EventID m.ID (denullInt(m.LoserFighterID)) |> ignore
+    
     let betsForThisMatch = getBetsForMatch m.ID
     let winningBets = 
         betsForThisMatch
         |> Array.filter(fun x -> Nullable(x.FighterID) = m.WinnerFighterID && not(denullBool(m.IsDraw)) )
+    let losingBets = 
+        betsForThisMatch
+        |> Array.filter(fun x -> Nullable(x.FighterID) = m.LoserFighterID && not(denullBool(m.IsDraw)) )
     let winnerID = 
         if m.WinnerFighterID.HasValue then 
             failwith "Error: WinnerFighterID was null when trying to resolve bet"
@@ -59,25 +84,25 @@ let resolveBets (m: Match) (s: Season) (players: SeasonPlayer[]) =
         | x when x = m.Fighter2ID -> m.Fighter2Odds
         | _ -> failwithf "WinnerFighterID %i doesnt match either of the figthters for this Match" winnerID
     
-    // resolve bets
-    BetsDb.resolveBetWinners s.ID m.EventID m.ID (denullInt(m.WinnerFighterID)) |> ignore
-    BetsDb.resolveBetLosers s.ID m.EventID m.ID (denullInt(m.LoserFighterID)) |> ignore
-
     // mark all other parlays as lose for losers
+    for b in losingBets do
+        if b.ParlayID = Nullable() then ()
+        else BetsDb.resolveParlayBetLose seasonID m.EventID m.ID b.PlayerID b.ParlayID |> ignore
 
     // award winners with CASH PRIZES
     for b in winningBets do
-        let player = SeasonService.getSeasonPlayer b.SeasonID b.PlayerID
-
         let winAmount =
             if b.ParlayID = Nullable() then
                 calculateBetWin b.Stake winnerOdds
             else
                 let parlayedBets = getParlayedBets b
                 let parlayOdds = parlayedBets |> Array.map(fun x -> x.Odds)
-                match parlayedBets |> Array.forall(fun x -> x.Result = Nullable(BetResult.Win.Code)) with
+                match parlayedBets |> areAllBetsWinOrPush with
                 | true -> calculateParlayBetWin b.Stake parlayOdds
                 | false -> 0.0M
-        ()
+        
+        match winAmount with 
+        | 0.0M -> ()
+        | _ -> SeasonService.givePlayerMoney b.SeasonID b.PlayerID winAmount
 
     ()

@@ -64,9 +64,8 @@ let removePlayerFromSeason seasonID playerID =
         AND PlayerID = @PlayerID""", qp)
         
 let updateCurrentCash (sp: SeasonPlayer) =
-    let qp : QueryParamsCurrentCash = { CurrentCash = sp.CurrentCash }
     DbContext.Instance.Connection.Execute("""
         UPDATE dbo.SeasonPlayers
         SET CurrentCash = @CurrentCash
         WHERE SeasonID = @SeasonID
-          AND PlayerID = @PlayerID""", qp)
+          AND PlayerID = @PlayerID""", sp)

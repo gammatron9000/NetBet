@@ -2,6 +2,7 @@
 module SeasonService
 
 open DbTypes
+open System
 
 let getAllSeasons() = 
     SeasonsDb.getAllSeasons() |> Seq.toArray
@@ -59,5 +60,18 @@ let updateSeasonPlayersToDb seasonID (players: Player[]) =
         |> Array.sum
     removed + added
     
+let givePlayerMoney seasonID playerID amount =
+    let seasonPlayer = getSeasonPlayer seasonID playerID
+    let newCurrentCash = seasonPlayer.CurrentCash + amount
+    let rounded = Math.Round(newCurrentCash, 2)
+    let newPlayer = { seasonPlayer with CurrentCash = rounded }
+    SeasonPlayersDb.updateCurrentCash newPlayer |> ignore
+
+let removePlayerMoney seasonID playerID amount =
+    let seasonPlayer = getSeasonPlayer seasonID playerID
+    let newCurrentCash = seasonPlayer.CurrentCash - amount
+    let rounded = Math.Round(newCurrentCash, 2)
+    let newPlayer = { seasonPlayer with CurrentCash = rounded }
+    SeasonPlayersDb.updateCurrentCash newPlayer |> ignore
 
 

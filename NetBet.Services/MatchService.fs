@@ -21,13 +21,10 @@ let resolveMatch (m: Match) =
     let transaction = DbContext.Instance.Connection.BeginTransaction()
     MatchesDb.resolveMatch m |> ignore
     let evt = EventService.getEventByID m.EventID
-    let season = SeasonService.getSeasonWithPlayers evt.SeasonID
 
     match denullBool(m.IsDraw) with 
     | true -> BetService.pushBetsForMatch m.ID |> ignore
-    | false ->
-        
-        ()
+    | false -> BetService.resolveBets m evt.SeasonID
 
     transaction.Commit() |> ignore
     ()
