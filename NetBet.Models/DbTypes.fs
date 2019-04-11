@@ -61,6 +61,7 @@ type Match =
         WinnerFighterID : Nullable<int>
         LoserFighterID  : Nullable<int>
         IsDraw          : Nullable<Boolean>
+        DisplayOrder    : int
     }
     
 [<CLIMutable>]

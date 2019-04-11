@@ -7,21 +7,21 @@ open DbTypes
 let getMatchByID matchID = 
     let qp : QueryParamsID = { ID = matchID }
     DbContext.Instance.Connection.Query<Match>("""
-        SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw
+        SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE ID = @ID""", qp)
 
 let getMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
     DbContext.Instance.Connection.Query<Match>("""
-        SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw
+        SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
 
 let insertMatch (m: Match) =
     DbContext.Instance.Connection.Execute("""
-        INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw)
-        VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw )""", m)
+        INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder)
+        VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw, @DisplayOrder )""", m)
 
 let insertMatches (matches: Match[]) =
     let mutable allResults = 0
