@@ -83,6 +83,13 @@ type Season =
         MaxParlaySize : int
     }
 
+[<CLIMutable>]
+type DbSeasonPlayer =
+    { SeasonID    : int
+      PlayerID    : int
+      CurrentCash : decimal }
+
+
 
 // VIEWS
 
