@@ -3,16 +3,17 @@
 open System
 open DbTypes
 open DataGenerators
+open DbCommon
 
 let seasons = 
     [| makeSeason "Season1"
        makeSeason "Season2" |]
 
 let players = 
-    [| makePlayer "Dustin"
-       makePlayer "Jake"
-       makePlayer "Tony" 
-       makePlayer "Stephanie" |]
+    [| "Dustin"
+       "Jake"
+       "Tony" 
+       "Stephanie" |]
 
 let fighters = 
     [| makeFighter "Gabe Ruediger"
@@ -34,4 +35,14 @@ let fighters =
        makeFighter "Mayhem Miller"
        makeFighter "Teila Tuli" |]
 
-// TODO : make events and matches and bets (from IDs)
+let insertSampleDataToDb () = 
+    fighters |> Array.map FightersDb.insertFighter |> ignore
+    players  |> Array.map PlayersDb.insertPlayer |> ignore
+    seasons  |> Array.map SeasonsDb.insertSeason |> ignore
+
+    let fightersFromDb = FightersDb.getAllFighters() |> Seq.toArray
+    let playersFromDb  = PlayersDb.getAllPlayers() |> Seq.toArray
+    let seasonsFromDb  = SeasonsDb.getAllSeasons() |> Seq.toArray
+
+    ()
+

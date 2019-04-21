@@ -6,22 +6,31 @@ open DbTypes
 
 let getMatchByID matchID = 
     let qp : QueryParamsID = { ID = matchID }
-    DbContext.Instance.Connection.Query<Match>("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Query<Match>("""
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE ID = @ID""", qp)
+    DbContext.CloseConnection()
+    result
 
 let getMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    DbContext.Instance.Connection.Query<Match>("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Query<Match>("""
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
+    DbContext.CloseConnection()
+    result
 
 let insertMatch (m: Match) =
-    DbContext.Instance.Connection.Execute("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Execute("""
         INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder)
         VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw, @DisplayOrder )""", m)
+    DbContext.CloseConnection()
+    result
 
 let insertMatches (matches: Match[]) =
     let mutable allResults = 0
@@ -32,19 +41,28 @@ let insertMatches (matches: Match[]) =
 
 let deleteMatch matchID = 
     let qp : QueryParamsID = { ID = matchID }
-    DbContext.Instance.Connection.Execute("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Execute("""
         DELETE FROM dbo.Matches WHERE ID = @ID""", qp)
+    DbContext.CloseConnection()
+    result
 
 let resolveMatch (m: Match) =
-    DbContext.Instance.Connection.Execute("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Execute("""
         UPDATE dbo.Matches
         SET WinnerFighterID = @WinnerFighterID
           , LoserFighterID = @LoserFighterID
           , IsDraw = @IsDraw
         WHERE ID = @ID""", m)
+    DbContext.CloseConnection()
+    result
 
 let deleteAllMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    DbContext.Instance.Connection.Execute("""
+    DbContext.OpenConnection()
+    let result = DbContext.Connection.Execute("""
         DELETE FROM dbo.Matches
         WHERE EventID = @ID""", qp)
+    DbContext.CloseConnection()
+    result

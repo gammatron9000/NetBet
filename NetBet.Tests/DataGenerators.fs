@@ -11,11 +11,7 @@ let makeSeason name =
       StartingCash  = 1000
       MinimumCash   = 50
       MaxParlaySize = 5 }
-
-let makePlayer name = 
-    { ID = 0
-      Name = name }
-
+      
 let makeSeasonPlayer seasonID playerID currentCash =
     { SeasonID    = seasonID
       PlayerID    = playerID

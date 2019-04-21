@@ -18,7 +18,7 @@ let createMatch (m: Match) =
     MatchesDb.insertMatch m
     
 let resolveMatch (m: Match) =
-    let transaction = DbContext.Instance.Connection.BeginTransaction()
+    let transaction = DbContext.Connection.BeginTransaction()
     MatchesDb.resolveMatch m |> ignore
     let evt = EventService.getEventByID m.EventID
 

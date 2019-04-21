@@ -3,19 +3,21 @@
 open System.Data.SqlClient
 open System
 
-let connectionString = "Server=localhost\SQLEXPRESS; Database=NetBetDb; Integrated Security=true;"
+//let connectionString = "Server=localhost\SQLEXPRESS; Database=NetBetDb; Integrated Security=true;"
 
-type DbContext() =
-    let connection = new SqlConnection(connectionString)
-    static let instance = new DbContext()
-    do connection.Open() |> ignore
+type DbContext () =
+    static let mutable connection = new SqlConnection("")
+    static member OpenConnection()  = connection.Open() |> ignore
+    static member CloseConnection() = connection.Close() |> ignore
 
-    member __.Connection = connection
-    static member Instance = instance
+    static member Connection 
+        with get() = connection
+        and set(v) = 
+            connection <- v
     
     interface IDisposable with
-        member this.Dispose() = 
-            this.Connection.Close() |> ignore
+        member __.Dispose() = 
+            DbContext.Connection.Close() |> ignore
     
 
 type QueryParamsID = { ID: int }

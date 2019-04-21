@@ -5,10 +5,14 @@ open System.Collections.Generic
 open System.Linq
 open Xunit
 open DatabaseFixture
+open DbCommon
+open System.Data.SqlClient
 
 let dbName = "NetBetDbTest"
 let connectionString = dropDatabase(dbName)
+DbContext.Connection <- new SqlConnection(connectionString)
 let dbUpgradeResult = upgradeDb(connectionString)
+SampleData.insertSampleDataToDb() |> ignore
 
 [<Fact>]
 let dbUpgradeTest() =
