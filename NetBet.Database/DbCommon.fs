@@ -3,19 +3,21 @@
 open System.Data.SqlClient
 open System
 
-type Cs() = 
+type Db () =
+    static let mutable connection = new SqlConnection()
     static let mutable cs = ""
+    
+    static member CreateConnection() =
+        if String.IsNullOrWhitespace(cs) 
+        then failwith "ERROR: ConnectionString is empty"
+        else 
+            connection <- new SqlConnection(cs)
+            connection.Open() |> ignore
+            connection
+
     static member ConnectionString
         with get() = cs
         and set(v) = cs <- v
-
-
-type Db () =
-    static let mutable connection = new SqlConnection()
-    static member CreateConnection() =
-        connection <- new SqlConnection(Cs.ConnectionString)
-        connection.Open() |> ignore
-        connection
     
     interface IDisposable with
         member __.Dispose() = 
