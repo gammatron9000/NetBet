@@ -10,8 +10,8 @@ open System.Data.SqlClient
 
 let dbName = "NetBetDbTest"
 let connectionString = dropDatabase(dbName)
-DbContext.Connection <- new SqlConnection(connectionString)
 let dbUpgradeResult = upgradeDb(connectionString)
+Cs.ConnectionString <- connectionString
 SampleData.insertSampleDataToDb() |> ignore
 
 [<Fact>]

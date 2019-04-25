@@ -44,5 +44,7 @@ let insertSampleDataToDb () =
     let playersFromDb  = PlayersDb.getAllPlayers() |> Seq.toArray
     let seasonsFromDb  = SeasonsDb.getAllSeasons() |> Seq.toArray
 
+
+
     ()
 
