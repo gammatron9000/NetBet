@@ -8,7 +8,7 @@ type Db () =
     static let mutable cs = ""
     
     static member CreateConnection() =
-        if String.IsNullOrWhitespace(cs) 
+        if String.IsNullOrWhiteSpace(cs) 
         then failwith "ERROR: ConnectionString is empty"
         else 
             connection <- new SqlConnection(cs)
