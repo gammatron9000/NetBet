@@ -134,3 +134,10 @@ let resolveParlayBetLose seasonID eventID matchID playerID parlayID =
           AND PlayerID = @PlayerID
           AND ParlayID = @ParlayID
           AND Result IS NULL""", qp)
+
+let getPrettyBets eventID = 
+    let qp: QueryParamsEventID =
+        { EventID = eventID }
+    use connection = Db.CreateConnection()
+    connection.Query<PrettyBet>("""
+        SELECT * FROM getPrettyBetsForEvent(@EventID)""", qp)

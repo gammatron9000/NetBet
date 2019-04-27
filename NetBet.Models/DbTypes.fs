@@ -102,3 +102,21 @@ type SeasonPlayer =
         MinimumCash : int
         CurrentCash : decimal
     }
+
+
+type PrettyBet = 
+    { 
+        SeasonID: int
+        EventID: int
+        MatchID: int
+        PlayerID: int
+        FighterID: int
+        ParlayID: Nullable<Guid>
+        Stake: decimal
+        Result: Nullable<int>
+        Odds: decimal
+        DisplayOrder: int
+        FighterName: string
+        ImageLink: string
+        PlayerName: string
+    }

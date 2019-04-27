@@ -17,6 +17,9 @@ let getBetsForPlayerForSeason playerID seasonID =
 let getParlayedBets (b: BetWithOdds) = 
     BetsDb.getParlayedBets b |> Seq.toArray
 
+let getPrettyBetsForEvent eventID = 
+    BetsDb.getPrettyBets eventID
+
 let createBet bet =
     BetsDb.insertBet bet |> ignore
     SeasonService.removePlayerMoney bet.SeasonID bet.PlayerID bet.Stake
@@ -42,7 +45,7 @@ let isBetWinner (b: BetWithOdds) =
     else false
 
 let areAllBetsWinOrPush (bets: BetWithOdds[]) =
-    bets |> Array.forall(fun x ->(x.Result = Nullable(BetResult.Win.Code) || x.Result = Nullable(BetResult.Push.Code)) )
+    bets |> Array.forall(fun x -> (x.Result = Nullable(BetResult.Win.Code) || x.Result = Nullable(BetResult.Push.Code)) )
 
 let pushBetsForMatch matchID =
     BetsDb.pushBetsForMatch matchID |> ignore

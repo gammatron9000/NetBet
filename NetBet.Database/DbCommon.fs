@@ -45,3 +45,5 @@ type QueryParamsParlayedBets =
       ParlayID: Nullable<Guid> }
 type QueryParamsParlayID =
     { ParlayID: Guid }
+type QueryParamsEventID = 
+    { EventID: int }
