@@ -34,6 +34,9 @@ let getSeasonWithPlayers seasonID =
 let getSeasonPlayer seasonID playerID =
     SeasonPlayersDb.getSeasonPlayer seasonID playerID |> Seq.exactlyOne
 
+let addPlayerToSeason seasonID playerID =
+    SeasonPlayersDb.addPlayerToSeason seasonID playerID
+
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =
         existingPlayerIDs

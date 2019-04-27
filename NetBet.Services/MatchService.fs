@@ -17,6 +17,9 @@ let deleteMatch matchID =
 let createMatch (m: Match) = 
     MatchesDb.insertMatch m
 
+let createMatches (matches: Match[]) = 
+    MatchesDb.insertMatches matches
+
 let resolveMatch (m: Match) =
     use connection = Db.CreateConnection()
     use transaction = connection.BeginTransaction()

@@ -53,8 +53,11 @@ let addPlayerToSeason seasonID playerID =
           WHERE PlayerID = @PlayerID
           AND SeasonID = @SeasonID)
         BEGIN
-            INSERT INTO dbo.SeasonPlayers (SeasonID, PlayerID, CurrentCash)
-            VALUES( @SeasonID, @PlayerID, @CurrentCash )
+            ;WITH season as 
+            ( SELECT ID, StartingCash FROM Seasons where ID = @SeasonID )
+            INSERT INTO SeasonPlayers (SeasonID, PlayerID, CurrentCash)
+            SELECT @SeasonID, @PlayerID, StartingCash FROM season
+
         END """, qp)
 
 let removePlayerFromSeason seasonID playerID =

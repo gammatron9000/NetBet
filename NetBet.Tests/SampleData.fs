@@ -38,21 +38,25 @@ let fighters =
 
 
 let insertSampleDataToDb () = 
-    fighters |> Array.map FightersDb.insertFighter |> ignore
-    players  |> Array.map PlayersDb.insertPlayer |> ignore
-    seasons  |> Array.map SeasonsDb.insertSeason |> ignore
+    fighters |> Array.map FighterService.createFighter |> ignore
+    players  |> Array.map SeasonService.createPlayer |> ignore
+    seasons  |> Array.map SeasonService.createSeason |> ignore
 
-    let fightersFromDb = FightersDb.getAllFighters() |> Seq.toArray
-    let playersFromDb  = PlayersDb.getAllPlayers() |> Seq.toArray
-    let seasonsFromDb  = SeasonsDb.getAllSeasons() |> Seq.toArray
+    let fightersFromDb = FighterService.getAllFighters() |> Seq.toArray
+    let playersFromDb  = SeasonService.getAllPlayers() |> Seq.toArray
+    let seasonsFromDb  = SeasonService.getAllSeasons() |> Seq.toArray
     let season1ID = seasonsFromDb.[0].ID
     let season2ID = seasonsFromDb.[1].ID
+
+    for s in seasonsFromDb do
+        for p in playersFromDb do
+            SeasonService.addPlayerToSeason s.ID p.ID |> ignore
 
     let events = 
         [| makeEvent season1ID "Event Number One"
            makeEvent season1ID "Event Number Two"
            makeEvent season2ID "Season 2 Event" |]
-    events |> Array.iter (fun x -> x |> EventsDb.insertEvent |> ignore)
+    events |> Array.iter (fun x -> x |> EventService.createEvent |> ignore)
     let season1Events = EventsDb.getEventsForSeason season1ID  |> Seq.toArray
     let season1Event1ID = season1Events.[0].ID
     let season1Event2ID = season1Events.[1].ID
@@ -71,7 +75,7 @@ let insertSampleDataToDb () =
            makeMatch season1Event2ID fightersFromDb.[0].ID  fightersFromDb.[12].ID 3.00M 1.50M
            makeMatch season1Event2ID fightersFromDb.[7].ID  fightersFromDb.[4].ID  1.78M 2.10M
            makeMatch season2Event.ID fightersFromDb.[15].ID fightersFromDb.[1].ID  5.00M 1.10M |]
-    MatchesDb.insertMatches matches |> ignore
+    matches |> MatchService.createMatches |> ignore
     let event1Matches = MatchesDb.getMatchesForEvent season1Event1ID |> Seq.toArray
     let event2Matches = MatchesDb.getMatchesForEvent season1Event2ID |> Seq.toArray
     let event3Matches = MatchesDb.getMatchesForEvent season2Event.ID |> Seq.toArray
@@ -80,9 +84,15 @@ let insertSampleDataToDb () =
     let parlay1id = Guid.NewGuid() |> Nullable
     let parlay2id = Guid.NewGuid() |> Nullable
     let bets = 
-        [| makeBet season1ID season1Event1ID event1Matches.[0].ID playersFromDb.[0].ID fightersFromDb.[1].ID (Nullable()) 50M
-           makeBet season1ID season1Event1ID event1Matches.[3].ID playersFromDb.[0].ID fightersFromDb.[6].ID parlay1id 20M
-            |]
+        [| makeBet season1ID season1Event1ID event1Matches.[0].ID playersFromDb.[0].ID fightersFromDb.[1].ID  (Nullable()) 50M
+           makeBet season1ID season1Event1ID event1Matches.[3].ID playersFromDb.[0].ID fightersFromDb.[6].ID  parlay1id 20M
+           makeBet season1ID season1Event1ID event1Matches.[4].ID playersFromDb.[0].ID fightersFromDb.[9].ID  parlay1id 20M
+           makeBet season1ID season1Event1ID event1Matches.[5].ID playersFromDb.[1].ID fightersFromDb.[10].ID (Nullable()) 10M
+           makeBet season1ID season1Event2ID event2Matches.[0].ID playersFromDb.[2].ID fightersFromDb.[0].ID  parlay2id 30M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID playersFromDb.[2].ID fightersFromDb.[7].ID  parlay2id 30M
+           makeBet season2ID season2Event.ID event3Matches.[0].ID playersFromDb.[3].ID fightersFromDb.[1].ID  (Nullable()) 100M |]
+    bets |> Array.iter BetService.createBet
+    
 
     ()
 

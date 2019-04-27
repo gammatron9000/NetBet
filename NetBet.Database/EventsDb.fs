@@ -16,7 +16,7 @@ let getEventsForSeason seasonID =
     let qp : QueryParamsID = { ID = seasonID }
     use connection = Db.CreateConnection()
     connection.Query<Event>("""
-        SELECT ID, SesaonID, Name, StartTime 
+        SELECT ID, SeasonID, Name, StartTime 
         FROM dbo.Events
         WHERE SeasonID = @ID""", qp)
 
@@ -29,7 +29,7 @@ let insertEvent (evt: Event) =
           WHERE ID = @ID )
         BEGIN
             INSERT INTO dbo.Events (SeasonID, Name, StartTime)
-            VALUES( @ID, @SeasonID, @Name, @StartTime)
+            VALUES(@SeasonID, @Name, @StartTime)
         END""", evt)
 
 let deleteEvent eventID = 
