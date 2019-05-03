@@ -40,10 +40,13 @@ type QueryParamsResolveBet =
 type QueryParamsParlayedBets = 
     { SeasonID: int
       EventID: int
-      MatchID: int
       PlayerID: int
-      ParlayID: Nullable<Guid> }
+      ParlayID: Guid }
 type QueryParamsParlayID =
     { ParlayID: Guid }
 type QueryParamsEventID = 
     { EventID: int }
+type QueryParamsResolveMatch =
+    { MatchID: int
+      WinnerID: Nullable<int>
+      IsDraw: Nullable<bool> }

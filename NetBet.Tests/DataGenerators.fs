@@ -41,12 +41,12 @@ let makeMatch eventID fighter1ID fighter2ID fighter1Odds fighter2Odds =
       IsDraw          = Nullable()
       DisplayOrder    = 0 }
 
-let makeBet seasonID eventID matchID playerID fighterID parlayID stake = 
+let makeBet seasonID eventID matchID playerID fighterID stake = 
     { SeasonID  = seasonID
       EventID   = eventID
       MatchID   = matchID
       PlayerID  = playerID
       FighterID = fighterID
-      ParlayID  = parlayID
+      ParlayID  = Guid()
       Stake     = stake
       Result    = Nullable() }

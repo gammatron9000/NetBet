@@ -3,7 +3,7 @@
 open System
 open DbTypes
 open DataGenerators
-open DbCommon
+open Xunit
 
 let seasons = 
     [| makeSeason "Season1"
@@ -41,9 +41,35 @@ let insertSampleDataToDb () =
     fighters |> Array.map FighterService.createFighter |> ignore
     players  |> Array.map SeasonService.createPlayer |> ignore
     seasons  |> Array.map SeasonService.createSeason |> ignore
-
-    let fightersFromDb = FighterService.getAllFighters() |> Seq.toArray
+    
+    let fighterMap = 
+        FighterService.getAllFighters()
+        |> Array.map(fun x -> x.Name, x.ID)
+        |> Map.ofArray
+    let ruediger  = fighterMap.["Gabe Ruediger"]
+    let goulet    = fighterMap.["Jonathan Goulet"]
+    let allen     = fighterMap.["Kenneth Allen"]
+    let starnes   = fighterMap.["Caleb Starnes"]
+    let mclellan  = fighterMap.["Garreth McLellan"]
+    let lobov     = fighterMap.["Artem Lobov"]
+    let pfister   = fighterMap.["Cody Pfister"]
+    let condo     = fighterMap.["Chris Condo"]
+    let potts     = fighterMap.["Ruan Potts"]
+    let brenneman = fighterMap.["Charlie Brenneman"]
+    let yarbrough = fighterMap.["Emmanuel Yarbrough"]
+    let sapp      = fighterMap.["Bob Sapp"]
+    let dada      = fighterMap.["Dada 5000"]
+    let son       = fighterMap.["Joe Son"]
+    let ghosn     = fighterMap.["Tiki Ghosn"]
+    let sinosic   = fighterMap.["Elvis Sinosic"]
+    let miller    = fighterMap.["Mayhem Miller"]
+    let tuli      = fighterMap.["Teila Tuli"]
     let playersFromDb  = SeasonService.getAllPlayers() |> Seq.toArray
+    let playerMap = 
+        playersFromDb
+        |> Array.map(fun x -> x.Name, x.ID)
+        |> Map.ofArray
+
     let seasonsFromDb  = SeasonService.getAllSeasons() |> Seq.toArray
     let season1ID = seasonsFromDb.[0].ID
     let season2ID = seasonsFromDb.[1].ID
@@ -63,36 +89,58 @@ let insertSampleDataToDb () =
     let season2Event = EventsDb.getEventsForSeason season2ID |> Seq.exactlyOne
     
     let matches = 
-        [| makeMatch season1Event1ID fightersFromDb.[0].ID  fightersFromDb.[1].ID  1.90M 2.10M
-           makeMatch season1Event1ID fightersFromDb.[2].ID  fightersFromDb.[3].ID  5.00M 1.10M
-           makeMatch season1Event1ID fightersFromDb.[4].ID  fightersFromDb.[5].ID  1.25M 4.10M
-           makeMatch season1Event1ID fightersFromDb.[6].ID  fightersFromDb.[7].ID  2.60M 1.41M
-           makeMatch season1Event1ID fightersFromDb.[8].ID  fightersFromDb.[9].ID  2.33M 1.66M
-           makeMatch season1Event1ID fightersFromDb.[10].ID fightersFromDb.[11].ID 4.32M 1.22M
-           makeMatch season1Event1ID fightersFromDb.[12].ID fightersFromDb.[13].ID 10.0M 1.01M
-           makeMatch season1Event1ID fightersFromDb.[14].ID fightersFromDb.[15].ID 2.01M 1.91M
-           makeMatch season1Event1ID fightersFromDb.[16].ID fightersFromDb.[17].ID 2.75M 1.35M
-           makeMatch season1Event2ID fightersFromDb.[0].ID  fightersFromDb.[12].ID 3.00M 1.50M
-           makeMatch season1Event2ID fightersFromDb.[7].ID  fightersFromDb.[4].ID  1.78M 2.10M
-           makeMatch season2Event.ID fightersFromDb.[15].ID fightersFromDb.[1].ID  5.00M 1.10M |]
+        [| makeMatch season1Event1ID ruediger  goulet    1.90M 2.10M   
+           makeMatch season1Event1ID allen     starnes   5.00M 1.10M   
+           makeMatch season1Event1ID mclellan  lobov     1.25M 4.10M   
+           makeMatch season1Event1ID condo     pfister   2.60M 1.41M   
+           makeMatch season1Event1ID potts     brenneman 2.33M 1.66M   
+           makeMatch season1Event1ID yarbrough sapp      4.32M 1.22M   
+           makeMatch season1Event1ID dada      son       10.0M 1.01M   
+           makeMatch season1Event1ID ghosn     sinosic   2.01M 1.91M   
+           makeMatch season1Event1ID miller    tuli      2.75M 1.35M   
+           makeMatch season1Event2ID ruediger  dada      3.00M 1.50M   
+           makeMatch season1Event2ID condo     mclellan  1.78M 2.10M   
+           makeMatch season2Event.ID sinosic   goulet    5.00M 1.10M |]
     matches |> MatchService.createMatches |> ignore
     let event1Matches = MatchesDb.getMatchesForEvent season1Event1ID |> Seq.toArray
     let event2Matches = MatchesDb.getMatchesForEvent season1Event2ID |> Seq.toArray
     let event3Matches = MatchesDb.getMatchesForEvent season2Event.ID |> Seq.toArray
     
-    // makeBet seasonID eventID matchID playerID fighterID parlayID stake
-    let parlay1id = Guid.NewGuid() |> Nullable
-    let parlay2id = Guid.NewGuid() |> Nullable
-    let bets = 
-        [| makeBet season1ID season1Event1ID event1Matches.[0].ID playersFromDb.[0].ID fightersFromDb.[1].ID  (Nullable()) 50M
-           makeBet season1ID season1Event1ID event1Matches.[3].ID playersFromDb.[0].ID fightersFromDb.[6].ID  parlay1id 20M
-           makeBet season1ID season1Event1ID event1Matches.[4].ID playersFromDb.[0].ID fightersFromDb.[9].ID  parlay1id 20M
-           makeBet season1ID season1Event1ID event1Matches.[5].ID playersFromDb.[1].ID fightersFromDb.[10].ID (Nullable()) 10M
-           makeBet season1ID season1Event2ID event2Matches.[0].ID playersFromDb.[2].ID fightersFromDb.[0].ID  parlay2id 30M
-           makeBet season1ID season1Event2ID event2Matches.[1].ID playersFromDb.[2].ID fightersFromDb.[7].ID  parlay2id 30M
-           makeBet season2ID season2Event.ID event3Matches.[0].ID playersFromDb.[3].ID fightersFromDb.[1].ID  (Nullable()) 100M |]
-    bets |> Array.iter BetService.createBet
+    let dustin = playerMap.["Dustin"]
+    let jake   = playerMap.["Jake"]
+    let tony   = playerMap.["Tony"]
+    let steph  = playerMap.["Stephanie"]
+
+    let singleBets = 
+        [| makeBet season1ID season1Event1ID event1Matches.[0].ID dustin goulet   50M
+           makeBet season1ID season1Event1ID event1Matches.[0].ID jake   ruediger 10M
+           makeBet season1ID season1Event1ID event1Matches.[6].ID jake   son      10M
+           makeBet season1ID season1Event1ID event1Matches.[8].ID jake   tuli     10M
+           makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet   100M |]
+    singleBets |> Array.iter BetService.placeSingleBet
+        
+    let parlay1 = 
+        [| makeBet season1ID season1Event1ID event1Matches.[3].ID dustin pfister   20M
+           makeBet season1ID season1Event1ID event1Matches.[4].ID dustin brenneman 20M |]
+    let parlay2 = 
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 30M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    30M |]
+    let parlay3 = 
+        [| makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    10M
+           makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 10M |]
+    let parlay4 = 
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada     10M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID tony mclellan 10M |]
+    [| parlay1; parlay2; parlay3; parlay4 |] |> Array.iter BetService.placeParlayBet
     
+    let dustinS1 = SeasonService.getSeasonPlayer season1ID dustin 
+    let jakeS1   = SeasonService.getSeasonPlayer season1ID jake
+    let tonyS1   = SeasonService.getSeasonPlayer season1ID tony
+    let stephS2  = SeasonService.getSeasonPlayer season2ID steph
+    Assert.Equal(930M, dustinS1.CurrentCash)
+    Assert.Equal(970M, jakeS1.CurrentCash)
+    Assert.Equal(950M, tonyS1.CurrentCash)
+    Assert.Equal(900M, stephS2.CurrentCash)
 
     ()
 

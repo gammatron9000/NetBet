@@ -13,6 +13,11 @@ let getSeasonById id =
     use connection = Db.CreateConnection()
     connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE ID = @ID", qp)
 
+let getSeasonByName name = 
+    let qp: QueryParamsName = { Name = name }
+    use connection = Db.CreateConnection()
+    connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE [Name] = @Name", qp)
+
 let insertSeason (season: Season) = 
     use connection = Db.CreateConnection()
     connection.Execute("""

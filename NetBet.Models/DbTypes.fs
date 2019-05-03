@@ -10,7 +10,7 @@ type Bet =
         MatchID   : int
         PlayerID  : int
         FighterID : int
-        ParlayID  : Nullable<Guid>
+        ParlayID  : Guid
         Stake     : decimal
         Result    : Nullable<int>
     }
@@ -23,7 +23,7 @@ type BetWithOdds =
         MatchID   : int
         PlayerID  : int
         FighterID : int
-        ParlayID  : Nullable<Guid>
+        ParlayID  : Guid
         Stake     : decimal
         Result    : Nullable<int>
         Odds      : decimal
@@ -111,7 +111,7 @@ type PrettyBet =
         MatchID: int
         PlayerID: int
         FighterID: int
-        ParlayID: Nullable<Guid>
+        ParlayID: Guid
         Stake: decimal
         Result: Nullable<int>
         Odds: decimal

@@ -35,16 +35,14 @@ let getParlayedBets (b: BetWithOdds) =
     let qp : QueryParamsParlayedBets = 
         { SeasonID = b.SeasonID
           EventID = b.EventID
-          MatchID = b.MatchID
           PlayerID = b.PlayerID
           ParlayID = b.ParlayID }
     use connection = Db.CreateConnection()
     connection.Query<BetWithOdds>("""
-        SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result
+        SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result, Odds
         FROM dbo.BetsWithOdds
         WHERE SeasonID = @SeasonID
           AND EventID = @EventID
-          AND MatchID = @MatchID 
           AND PlayerID = @PlayerID
           AND ParlayID = @ParlayID""", qp)
           
@@ -117,24 +115,6 @@ let resolveBetLosers seasonID eventID matchID loserFighterID =
           AND MatchID = @MatchID
           AND FighterID = @FighterID""", qp)
     
-let resolveParlayBetLose seasonID eventID matchID playerID parlayID =
-    let qp: QueryParamsParlayedBets =
-        { SeasonID = seasonID
-          EventID  = eventID
-          MatchID  = matchID
-          PlayerID = playerID
-          ParlayID = parlayID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
-        UPDATE dbo.Bets
-        SET Result = 0
-        WHERE SeasonID = @SeasonID
-          AND EventID  = @EventID
-          AND MatchID  = @MatchID
-          AND PlayerID = @PlayerID
-          AND ParlayID = @ParlayID
-          AND Result IS NULL""", qp)
-
 let getPrettyBets eventID = 
     let qp: QueryParamsEventID =
         { EventID = eventID }

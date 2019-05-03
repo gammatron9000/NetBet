@@ -20,15 +20,12 @@ let createMatch (m: Match) =
 let createMatches (matches: Match[]) = 
     MatchesDb.insertMatches matches
 
-let resolveMatch (m: Match) =
-    use connection = Db.CreateConnection()
-    use transaction = connection.BeginTransaction()
-    MatchesDb.resolveMatch m |> ignore
-    let evt = EventService.getEventByID m.EventID
+let resolveMatch eventID matchID winnerID isDraw =
+    MatchesDb.resolveMatch matchID winnerID isDraw |> ignore
+    let m = getMatchByID matchID
+    let evt = EventService.getEventByID eventID
 
-    match denullBool(m.IsDraw) with 
+    match denullBool(isDraw) with 
     | true -> BetService.pushBetsForMatch m.ID |> ignore
     | false -> BetService.resolveBets m evt.SeasonID
-
-    transaction.Commit() |> ignore
     ()

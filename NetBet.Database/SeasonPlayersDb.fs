@@ -19,7 +19,8 @@ let getPlayersForSeason seasonID =
         INNER JOIN dbo.Players as p
           ON p.ID = sp.PlayerID
         INNER JOIN dbo.Seasons as s
-          ON s.ID = sp.SeasonID""", qp)
+          ON s.ID = sp.SeasonID
+        WHERE sp.SeasonID = @ID""", qp)
     
 let getSeasonPlayer seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 

@@ -8,7 +8,7 @@ let getEventByID eventID =
     let qp : QueryParamsID = { ID = eventID }
     use connection = Db.CreateConnection()
     connection.Query<Event>("""
-        SELECT ID, SesaonID, Name, StartTime 
+        SELECT ID, SeasonID, Name, StartTime 
         FROM dbo.Events
         WHERE ID = @ID""", qp)
 

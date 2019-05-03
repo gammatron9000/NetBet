@@ -39,14 +39,21 @@ let deleteMatch matchID =
     connection.Execute("""
         DELETE FROM dbo.Matches WHERE ID = @ID""", qp)
 
-let resolveMatch (m: Match) =
+let resolveMatch matchID winnerID isDraw =
+    let qp : QueryParamsResolveMatch =
+        { MatchID = matchID
+          WinnerID = winnerID
+          IsDraw = isDraw }
     use connection = Db.CreateConnection()
     connection.Execute("""
         UPDATE dbo.Matches
-        SET WinnerFighterID = @WinnerFighterID
-          , LoserFighterID = @LoserFighterID
+        SET WinnerFighterID = @WinnerID
+          , LoserFighterID = 
+            CASE WHEN @WinnerID = Fighter1ID THEN Fighter2ID
+                 WHEN @WinnerID = Fighter2ID THEN Fighter1ID
+                 ELSE NULL END
           , IsDraw = @IsDraw
-        WHERE ID = @ID""", m)
+        WHERE ID = @MatchID""", qp)
 
 let deleteAllMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }

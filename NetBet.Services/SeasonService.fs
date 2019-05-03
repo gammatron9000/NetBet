@@ -7,8 +7,11 @@ open System
 let getAllSeasons() = 
     SeasonsDb.getAllSeasons() |> Seq.toArray
 
-let getSeasonByID(seasonID) = 
+let getSeasonByID seasonID = 
     SeasonsDb.getSeasonById(seasonID) |> Seq.exactlyOne
+
+let getSeasonByName name = 
+    SeasonsDb.getSeasonByName(name) |> Seq.toArray
 
 let createSeason (s: Season) = 
     SeasonsDb.insertSeason(s)
