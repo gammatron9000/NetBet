@@ -3,20 +3,26 @@
 open System.Data.SqlClient
 open System
 
-let connectionString = "Server=localhost\SQLEXPRESS; Database=NetBetDb; Integrated Security=true;"
+type Db () =
+    static let mutable connection = new SqlConnection()
+    static let mutable cs = ""
+    
+    static member CreateConnection() =
+        if String.IsNullOrWhiteSpace(cs) 
+        then failwith "ERROR: ConnectionString is empty"
+        else 
+            connection <- new SqlConnection(cs)
+            connection.Open() |> ignore
+            connection
 
-type DbContext() =
-    let connection = new SqlConnection(connectionString)
-    static let instance = new DbContext()
-    do connection.Open() |> ignore
-
-    member __.Connection = connection
-    static member Instance = instance
+    static member ConnectionString
+        with get() = cs
+        and set(v) = cs <- v
     
     interface IDisposable with
-        member this.Dispose() = 
-            this.Connection.Close() |> ignore
-    
+        member __.Dispose() = 
+            connection.Close() |> ignore
+
 
 type QueryParamsID = { ID: int }
 type QueryParamsSeasonPlayer = 
@@ -26,3 +32,22 @@ type QueryParamsCurrentCash =
     { CurrentCash: decimal }
 type QueryParamsName =
     { Name: string }
+type QueryParamsResolveBet =
+    { SeasonID: int
+      EventID: int 
+      MatchID: int
+      FighterID: int }
+type QueryParamsParlayedBets = 
+    { SeasonID: int
+      EventID: int
+      PlayerID: int
+      ParlayID: Guid }
+type QueryParamsParlayID =
+    { ParlayID: Guid }
+type QueryParamsEventID = 
+    { EventID: int }
+type QueryParamsResolveMatch =
+    { MatchID: int
+      WinnerID: Nullable<int>
+      IsDraw: Nullable<bool> }
+

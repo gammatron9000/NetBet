@@ -5,6 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DbUpgrader.fs" />
+    <EmbeddedResource Include="DbScripts\0000 - Schema.sql" />
+    <EmbeddedResource Include="DbScripts\0001 - getPrettyNames func.sql" />
     <Compile Include="DbCommon.fs" />
     <Compile Include="BetsDb.fs" />
     <Compile Include="FightersDb.fs" />
@@ -15,8 +18,11 @@
     <Compile Include="SeasonsDb.fs" />
   </ItemGroup>
 
+  <ItemGroup />
+
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.1" />
+    <PackageReference Include="dbup" Version="4.2.0" />
   </ItemGroup>
 
   <ItemGroup>

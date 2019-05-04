@@ -2,12 +2,16 @@
 module SeasonService
 
 open DbTypes
+open System
 
 let getAllSeasons() = 
     SeasonsDb.getAllSeasons() |> Seq.toArray
 
-let getSeason(seasonID) = 
+let getSeasonByID seasonID = 
     SeasonsDb.getSeasonById(seasonID) |> Seq.exactlyOne
+
+let getSeasonByName name = 
+    SeasonsDb.getSeasonByName(name) |> Seq.toArray
 
 let createSeason (s: Season) = 
     SeasonsDb.insertSeason(s)
@@ -27,8 +31,14 @@ let createPlayer name =
 let changePlayerName player =
     PlayersDb.updatePlayer player
     
-let getSeasonWithPlayers(seasonID) =
+let getSeasonWithPlayers seasonID =
     SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
+
+let getSeasonPlayer seasonID playerID =
+    SeasonPlayersDb.getSeasonPlayer seasonID playerID |> Seq.exactlyOne
+
+let addPlayerToSeason seasonID playerID =
+    SeasonPlayersDb.addPlayerToSeason seasonID playerID
 
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =
@@ -56,5 +66,18 @@ let updateSeasonPlayersToDb seasonID (players: Player[]) =
         |> Array.sum
     removed + added
     
+let givePlayerMoney seasonID playerID amount =
+    let seasonPlayer = getSeasonPlayer seasonID playerID
+    let newCurrentCash = seasonPlayer.CurrentCash + amount
+    let rounded = Math.Round(newCurrentCash, 2)
+    let newPlayer = { seasonPlayer with CurrentCash = rounded }
+    SeasonPlayersDb.updateCurrentCash newPlayer |> ignore
+
+let removePlayerMoney seasonID playerID amount =
+    let seasonPlayer = getSeasonPlayer seasonID playerID
+    let newCurrentCash = seasonPlayer.CurrentCash - amount
+    let rounded = Math.Round(newCurrentCash, 2)
+    let newPlayer = { seasonPlayer with CurrentCash = rounded }
+    SeasonPlayersDb.updateCurrentCash newPlayer |> ignore
 
 

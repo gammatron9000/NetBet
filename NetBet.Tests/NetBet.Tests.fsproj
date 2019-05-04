@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DataGenerators.fs" />
+    <Compile Include="SampleData.fs" />
+    <Compile Include="DatabaseFixture.fs" />
+    <Compile Include="DatabaseTests.fs" />
+    <Compile Include="BetTests.fs" />
     <Compile Include="SeasonTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

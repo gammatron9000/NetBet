@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="DbTypes.fs" />
+    <Compile Include="DtoTypes.fs" />
   </ItemGroup>
 
 </Project>

@@ -5,23 +5,28 @@ open DbCommon
 open DbTypes
 
 let getAllPlayers() = 
-    DbContext.Instance.Connection.Query<Player>("SELECT ID, Name FROM dbo.Players")
+    use connection = Db.CreateConnection()
+    connection.Query<Player>("SELECT ID, Name FROM dbo.Players")
 
 let getPlayerByID id = 
     let qp : QueryParamsID = { ID = id }
-    DbContext.Instance.Connection.Query<Player>("SELECT ID, Name FROM dbo.Players WHERE ID = @ID", qp)
+    use connection = Db.CreateConnection()
+    connection.Query<Player>("SELECT ID, Name FROM dbo.Players WHERE ID = @ID", qp)
 
 let insertPlayer name = 
     let qp : QueryParamsName = { Name = name }
-    DbContext.Instance.Connection.Execute(
-        """INSERT INTO dbo.Players(Name)
-           VALUES (@Name)""", qp)
+    use connection = Db.CreateConnection()
+    connection.Execute("""
+        INSERT INTO dbo.Players(Name)
+        VALUES (@Name)""", qp)
 
 let updatePlayer (player: Player) = 
-    DbContext.Instance.Connection.Execute("""
+    use connection = Db.CreateConnection()
+    connection.Execute("""
             UPDATE dbo.Players
             SET Name = @Name
             WHERE ID = @ID""", player)
-
+    
 let deletePlayer (player: Player) =
-    DbContext.Instance.Connection.Execute("""DELETE FROM dbo.Players WHERE ID = @ID""", player)
+    use connection = Db.CreateConnection()
+    connection.Execute("""DELETE FROM dbo.Players WHERE ID = @ID""", player)

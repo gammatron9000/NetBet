@@ -5,19 +5,28 @@ open DbCommon
 open DbTypes
 
 let getAllSeasons () = 
-    DbContext.Instance.Connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons")
-    
+    use connection = Db.CreateConnection()
+    connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons")
+
 let getSeasonById id = 
     let qp : QueryParamsID = { ID = id }
-    DbContext.Instance.Connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE ID = @ID", qp)
-    
+    use connection = Db.CreateConnection()
+    connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE ID = @ID", qp)
+
+let getSeasonByName name = 
+    let qp: QueryParamsName = { Name = name }
+    use connection = Db.CreateConnection()
+    connection.Query<Season>("SELECT ID, Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize FROM dbo.Seasons WHERE [Name] = @Name", qp)
+
 let insertSeason (season: Season) = 
-    DbContext.Instance.Connection.Execute(
-        """INSERT INTO dbo.Seasons(Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize)
-           VALUES (@Name, @StartTime, @EndTime, @StartingCash, @MinimumCash, @MaxParlaySize) """, season)
+    use connection = Db.CreateConnection()
+    connection.Execute("""
+        INSERT INTO dbo.Seasons(Name, StartTime, EndTime, StartingCash, MinimumCash, MaxParlaySize)
+        VALUES (@Name, @StartTime, @EndTime, @StartingCash, @MinimumCash, @MaxParlaySize) """, season)
 
 let updateSeason (season: Season) = 
-    DbContext.Instance.Connection.Execute("""
+    use connection = Db.CreateConnection()
+    connection.Execute("""
         UPDATE dbo.Seasons
         SET Name = @Name
           , StartTime = @StartTime
@@ -28,6 +37,5 @@ let updateSeason (season: Season) =
         WHERE ID = @ID""", season)
 
 let deleteSeason (season: Season) =
-    DbContext.Instance.Connection.Execute("""DELETE FROM dbo.Seasons WHERE ID = @ID""", season)
-
-    
+    use connection = Db.CreateConnection()
+    connection.Execute("""DELETE FROM dbo.Seasons WHERE ID = @ID""", season)

@@ -2,8 +2,6 @@
 
 open System
 
-type BetResult = Lose = 0 | Win = 1 | Push = 2
-
 [<CLIMutable>]
 type Bet = 
     {
@@ -14,7 +12,21 @@ type Bet =
         FighterID : int
         ParlayID  : Guid
         Stake     : decimal
-        Result    : Nullable<BetResult>
+        Result    : Nullable<int>
+    }
+
+[<CLIMutable>]
+type BetWithOdds = 
+    {
+        SeasonID  : int
+        EventID   : int
+        MatchID   : int
+        PlayerID  : int
+        FighterID : int
+        ParlayID  : Guid
+        Stake     : decimal
+        Result    : Nullable<int>
+        Odds      : decimal
     }
 
 
@@ -49,6 +61,7 @@ type Match =
         WinnerFighterID : Nullable<int>
         LoserFighterID  : Nullable<int>
         IsDraw          : Nullable<Boolean>
+        DisplayOrder    : int
     }
     
 [<CLIMutable>]
@@ -57,15 +70,7 @@ type Player =
         ID   : int
         Name : string
     }
-
-[<CLIMutable>]
-type SeasonPlayer = 
-    {
-        SeasonID    : int
-        PlayerID    : int
-        CurrentCash : decimal
-    }
-
+    
 [<CLIMutable>]
 type Season = 
     {
@@ -78,10 +83,17 @@ type Season =
         MaxParlaySize : int
     }
 
+[<CLIMutable>]
+type DbSeasonPlayer =
+    { SeasonID    : int
+      PlayerID    : int
+      CurrentCash : decimal }
+
+
 
 // VIEWS
 
-type SeasonWithPlayers =
+type SeasonPlayer =
     {
         SeasonID    : int
         PlayerID    : int
@@ -89,4 +101,22 @@ type SeasonWithPlayers =
         PlayerName  : string
         MinimumCash : int
         CurrentCash : decimal
+    }
+
+
+type PrettyBet = 
+    { 
+        SeasonID: int
+        EventID: int
+        MatchID: int
+        PlayerID: int
+        FighterID: int
+        ParlayID: Guid
+        Stake: decimal
+        Result: Nullable<int>
+        Odds: decimal
+        DisplayOrder: int
+        FighterName: string
+        ImageLink: string
+        PlayerName: string
     }
