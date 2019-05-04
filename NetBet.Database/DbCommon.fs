@@ -50,3 +50,4 @@ type QueryParamsResolveMatch =
     { MatchID: int
       WinnerID: Nullable<int>
       IsDraw: Nullable<bool> }
+

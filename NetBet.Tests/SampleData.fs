@@ -34,18 +34,17 @@ let fighters =
        makeFighter "Elvis Sinosic"
        makeFighter "Mayhem Miller"
        makeFighter "Teila Tuli" |]
-
-
+       
+let getFighterMap () = 
+    FighterService.getAllFighters()
+    |> Array.map(fun x -> x.Name, x.ID)
+    |> Map.ofArray
 
 let insertSampleDataToDb () = 
     fighters |> Array.map FighterService.createFighter |> ignore
     players  |> Array.map SeasonService.createPlayer |> ignore
     seasons  |> Array.map SeasonService.createSeason |> ignore
-    
-    let fighterMap = 
-        FighterService.getAllFighters()
-        |> Array.map(fun x -> x.Name, x.ID)
-        |> Map.ofArray
+    let fighterMap = getFighterMap()
     let ruediger  = fighterMap.["Gabe Ruediger"]
     let goulet    = fighterMap.["Jonathan Goulet"]
     let allen     = fighterMap.["Kenneth Allen"]
@@ -99,7 +98,8 @@ let insertSampleDataToDb () =
            makeMatch season1Event1ID ghosn     sinosic   2.01M 1.91M   
            makeMatch season1Event1ID miller    tuli      2.75M 1.35M   
            makeMatch season1Event2ID ruediger  dada      3.00M 1.50M   
-           makeMatch season1Event2ID condo     mclellan  1.78M 2.10M   
+           makeMatch season1Event2ID condo     mclellan  1.78M 2.10M
+           makeMatch season1Event2ID sapp      potts     1.90M 1.90M
            makeMatch season2Event.ID sinosic   goulet    5.00M 1.10M |]
     matches |> MatchService.createMatches |> ignore
     let event1Matches = MatchesDb.getMatchesForEvent season1Event1ID |> Seq.toArray
@@ -119,19 +119,25 @@ let insertSampleDataToDb () =
            makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet   100M |]
     singleBets |> Array.iter BetService.placeSingleBet
         
-    let parlay1 = 
+    let parlay1 =  // both win
         [| makeBet season1ID season1Event1ID event1Matches.[3].ID dustin pfister   20M
            makeBet season1ID season1Event1ID event1Matches.[4].ID dustin brenneman 20M |]
-    let parlay2 = 
-        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 30M
-           makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    30M |]
-    let parlay3 = 
+    let parlay2 =  // ruediger wins, condo draws
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 10M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    10M |]
+    let parlay3 =  // condo draws, ruediger wins
         [| makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    10M
            makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 10M |]
-    let parlay4 = 
-        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada     10M
+    let parlay4 =  // sapp draws, mclellan draws
+        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony sapp     10M
            makeBet season1ID season1Event2ID event2Matches.[1].ID tony mclellan 10M |]
-    [| parlay1; parlay2; parlay3; parlay4 |] |> Array.iter BetService.placeParlayBet
+    let parlay5 =  // dada loses, potts draws
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada  10M
+           makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts 10M |]
+    let parlay6 =  // potts draws, dada loses
+        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts 10M 
+           makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada  10M |]
+    [| parlay1; parlay2; parlay3; parlay4; parlay5; parlay6 |] |> Array.iter BetService.placeParlayBet
     
     let dustinS1 = SeasonService.getSeasonPlayer season1ID dustin 
     let jakeS1   = SeasonService.getSeasonPlayer season1ID jake

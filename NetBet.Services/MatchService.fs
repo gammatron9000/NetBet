@@ -20,12 +20,22 @@ let createMatch (m: Match) =
 let createMatches (matches: Match[]) = 
     MatchesDb.insertMatches matches
 
-let resolveMatch eventID matchID winnerID isDraw =
-    MatchesDb.resolveMatch matchID winnerID isDraw |> ignore
+let validateMatch seasonID eventID matchID = 
     let m = getMatchByID matchID
-    let evt = EventService.getEventByID eventID
+    let e = EventService.getEventByID eventID
+    match m.EventID with 
+    | x when x = eventID -> ()
+    | _ -> failwithf "Match %i does not belong to Event %i" matchID eventID
+    match e.SeasonID with 
+    | x when x = seasonID -> ()
+    | _ -> failwithf "Error Trying to resolve Match %i : Event %i does not belong to Season %i" matchID eventID seasonID
 
+
+let resolveMatch seasonID eventID matchID winnerID isDraw =
+    validateMatch seasonID eventID matchID
+    MatchesDb.resolveMatch matchID winnerID isDraw |> ignore
+    
     match denullBool(isDraw) with 
-    | true -> BetService.pushBetsForMatch m.ID |> ignore
-    | false -> BetService.resolveBets m evt.SeasonID
+    | true -> BetService.pushBetsForMatch matchID |> ignore
+    | false -> BetService.resolveBets seasonID eventID matchID
     ()

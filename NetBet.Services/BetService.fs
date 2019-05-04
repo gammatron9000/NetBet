@@ -111,9 +111,10 @@ let pushBetsForMatch matchID =
         | Some x -> SeasonService.givePlayerMoney b.SeasonID b.PlayerID x
     ()
 
-let resolveBets (m: Match) (seasonID: int) = 
-    BetsDb.resolveBetWinners seasonID m.EventID m.ID (denullInt(m.WinnerFighterID)) |> ignore
-    BetsDb.resolveBetLosers seasonID m.EventID m.ID (denullInt(m.LoserFighterID)) |> ignore
+let resolveBets (seasonID: int) (eventID: int) (matchID: int) = 
+    let m = MatchesDb.getMatchByID matchID |> Seq.exactlyOne
+    BetsDb.resolveBetWinners seasonID eventID matchID (denullInt(m.WinnerFighterID)) |> ignore
+    BetsDb.resolveBetLosers seasonID eventID matchID (denullInt(m.LoserFighterID)) |> ignore
     
     let betsForThisMatch = getBetsForMatch m.ID
     for b in betsForThisMatch do
