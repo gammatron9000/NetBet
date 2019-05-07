@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="WebScraper.fs" />
     <Compile Include="Shared.fs" />
     <Compile Include="FighterService.fs" />
     <Compile Include="EventService.fs" />
     <Compile Include="SeasonService.fs" />
     <Compile Include="BetService.fs" />
     <Compile Include="MatchService.fs" />
+    <Compile Include="WebScraper.fs" />
   </ItemGroup>
 
   <ItemGroup>

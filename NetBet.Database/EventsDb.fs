@@ -20,9 +20,10 @@ let getEventsForSeason seasonID =
         FROM dbo.Events
         WHERE SeasonID = @ID""", qp)
 
+// returns the id of the event it will create
 let insertEvent (evt: Event) = 
     use connection = Db.CreateConnection()
-    connection.Execute("""
+    connection.QuerySingle<int>("""
         IF NOT EXISTS
         ( SELECT 1
           FROM dbo.Events
@@ -30,7 +31,13 @@ let insertEvent (evt: Event) =
         BEGIN
             INSERT INTO dbo.Events (SeasonID, Name, StartTime)
             VALUES(@SeasonID, @Name, @StartTime)
-        END""", evt)
+            SELECT SCOPE_IDENTITY()
+        END
+        ELSE 
+        BEGIN 
+            SELECT 0
+        END
+        """, evt)
 
 let deleteEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }

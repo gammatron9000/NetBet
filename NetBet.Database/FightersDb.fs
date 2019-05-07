@@ -19,6 +19,26 @@ let getAllFighters () =
         SELECT ID, Name, Image, ImageLink 
         FROM dbo.Fighters""")
 
+let getOrInsertFighterIDByName (name: string) =
+    let qp : QueryParamsName = { Name = name }
+    use connection = Db.CreateConnection()
+    connection.QuerySingle<int>("""
+        IF NOT EXISTS 
+        ( SELECT 1 
+          FROM dbo.Fighters 
+          WHERE Name = @Name )
+        BEGIN 
+            INSERT INTO dbo.Fighters (Name, Image, ImageLink)
+            VALUES (@Name, CAST('' as VARBINARY(max)), '')
+            SELECT SCOPE_IDENTITY()
+        END
+        ELSE
+        BEGIN
+            SELECT TOP 1 ID 
+            FROM dbo.Fighters
+            WHERE Name = @Name
+        END """, qp)
+
 let insertFighter (fighter: Fighter) =
     use connection = Db.CreateConnection()
     connection.Execute("""

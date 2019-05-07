@@ -2,6 +2,10 @@
 
 open FSharp.Data
 open System
+open DbTypes
+open DtoTypes
+open System.Data.SqlTypes
+open System.Collections.Generic
 
 type ScrapedFight =
     {
@@ -17,6 +21,39 @@ type ScrapedEvent =
         Name: string
         Fights: ScrapedFight[]
     }
+
+
+
+let fighterLookup (fighterDict: IDictionary<string, int>) (name: string) =
+    match fighterDict.TryGetValue(name) with
+    | true, x  -> x
+    | false, _ -> FighterService.getOrInsertFighterIDByName name
+
+let mapScrapedEventToNetbetEvent seasonID (s: ScrapedEvent) : EventWithMatches =
+    let evt = 
+        { ID = 0
+          SeasonID = seasonID
+          Name = s.Name 
+          StartTime = SqlDateTime.MinValue.Value }
+    let fighterdict = FighterService.getFightersIDLookupByName()
+    
+    let matches = 
+        s.Fights
+        |> Array.map(fun f -> 
+            let f1id = fighterLookup fighterdict f.Fighter1Name
+            let f2id = fighterLookup fighterdict f.Fighter2Name
+            {   ID              = 0
+                EventID         = 0
+                Fighter1ID      = f1id
+                Fighter2ID      = f2id
+                Fighter1Odds    = f.Fighter1Odds
+                Fighter2Odds    = f.Fighter2Odds
+                WinnerFighterID = Nullable()
+                LoserFighterID  = Nullable()
+                IsDraw          = Nullable()
+                DisplayOrder    = f.FightOrder })
+    { Event = evt
+      Matches = matches }
 
 
 //To convert moneyline odds to decimal,
@@ -93,4 +130,7 @@ let CreateEventsFromScrape () =
           Name = e
           Fights = pairedFighters }
     )
+
+
+
     

@@ -8,6 +8,19 @@ let getFighterByID fighterID =
 let getAllFighters () =
     FightersDb.getAllFighters() |> Seq.toArray
 
+let getOrInsertFighterIDByName (name: string) =
+    FightersDb.getOrInsertFighterIDByName name
+
+let getFightersIDLookupByName () = 
+    getAllFighters() 
+    |> Array.map(fun x -> x.Name, x.ID)
+    |> dict
+
+let getFightersNameLookupByID () =
+    getAllFighters()
+    |> Array.map(fun x -> x.ID, x.Name)
+    |> dict
+
 let createFighter (fighter: Fighter) =
     FightersDb.insertFighter fighter 
 

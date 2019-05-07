@@ -23,15 +23,9 @@ let makeEvent seasonID name =
       Name      = name
       StartTime = DateTime.Now.AddHours(1.0) }
 
-let makeFighter name = 
-    { ID = 0
-      Name = name
-      Image = [||] 
-      ImageLink = "" }
-
-let makeMatch eventID fighter1ID fighter2ID fighter1Odds fighter2Odds = 
+let makeMatch fighter1ID fighter2ID fighter1Odds fighter2Odds = 
     { ID              = 0
-      EventID         = eventID
+      EventID         = 0
       Fighter1ID      = fighter1ID
       Fighter2ID      = fighter2ID
       Fighter1Odds    = fighter1Odds

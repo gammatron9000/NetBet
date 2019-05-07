@@ -16,35 +16,30 @@ let players =
        "Stephanie" |]
 
 let fighters = 
-    [| makeFighter "Gabe Ruediger"
-       makeFighter "Jonathan Goulet"
-       makeFighter "Kenneth Allen"
-       makeFighter "Caleb Starnes"
-       makeFighter "Garreth McLellan"
-       makeFighter "Artem Lobov"
-       makeFighter "Cody Pfister"
-       makeFighter "Chris Condo"
-       makeFighter "Ruan Potts"
-       makeFighter "Charlie Brenneman"
-       makeFighter "Emmanuel Yarbrough"
-       makeFighter "Bob Sapp"
-       makeFighter "Dada 5000"
-       makeFighter "Joe Son"
-       makeFighter "Tiki Ghosn"
-       makeFighter "Elvis Sinosic"
-       makeFighter "Mayhem Miller"
-       makeFighter "Teila Tuli" |]
+    [| "Gabe Ruediger"
+       "Jonathan Goulet"
+       "Kenneth Allen"
+       "Caleb Starnes"
+       "Garreth McLellan"
+       "Artem Lobov"
+       "Cody Pfister"
+       "Chris Condo"
+       "Ruan Potts"
+       "Charlie Brenneman"
+       "Emmanuel Yarbrough"
+       "Bob Sapp"
+       "Dada 5000"
+       "Joe Son"
+       "Tiki Ghosn"
+       "Elvis Sinosic"
+       "Mayhem Miller"
+       "Teila Tuli" |]
        
-let getFighterMap () = 
-    FighterService.getAllFighters()
-    |> Array.map(fun x -> x.Name, x.ID)
-    |> Map.ofArray
-
 let insertSampleDataToDb () = 
-    fighters |> Array.map FighterService.createFighter |> ignore
+    fighters |> Array.map FighterService.getOrInsertFighterIDByName |> ignore
     players  |> Array.map SeasonService.createPlayer |> ignore
     seasons  |> Array.map SeasonService.createSeason |> ignore
-    let fighterMap = getFighterMap()
+    let fighterMap = FighterService.getFightersIDLookupByName()
     let ruediger  = fighterMap.["Gabe Ruediger"]
     let goulet    = fighterMap.["Jonathan Goulet"]
     let allen     = fighterMap.["Kenneth Allen"]
@@ -76,32 +71,39 @@ let insertSampleDataToDb () =
     for s in seasonsFromDb do
         for p in playersFromDb do
             SeasonService.addPlayerToSeason s.ID p.ID |> ignore
+            
+    let s1e1 = makeEvent season1ID "Event Number One"
+    let s1e2 = makeEvent season1ID "Event Number Two"
+    let s2e1 = makeEvent season2ID "Season 2 Event"
+    
+    let s1e1Matches = 
+        [| makeMatch ruediger  goulet    1.90M 2.10M   
+           makeMatch allen     starnes   5.00M 1.10M   
+           makeMatch mclellan  lobov     1.25M 4.10M   
+           makeMatch condo     pfister   2.60M 1.41M   
+           makeMatch potts     brenneman 2.33M 1.66M   
+           makeMatch yarbrough sapp      4.32M 1.22M   
+           makeMatch dada      son       10.0M 1.01M   
+           makeMatch ghosn     sinosic   2.01M 1.91M   
+           makeMatch miller    tuli      2.75M 1.35M |]
 
-    let events = 
-        [| makeEvent season1ID "Event Number One"
-           makeEvent season1ID "Event Number Two"
-           makeEvent season2ID "Season 2 Event" |]
-    events |> Array.iter (fun x -> x |> EventService.createEvent |> ignore)
+    let s1e2Matches = 
+        [| makeMatch ruediger  dada      3.00M 1.50M
+           makeMatch condo     mclellan  1.78M 2.10M
+           makeMatch sapp      potts     1.90M 1.90M |]
+
+    let s2e1Matches = 
+        [| makeMatch sinosic   goulet    5.00M 1.10M |]
+
+    EventService.createEventWithMatches s1e1 s1e1Matches |> ignore
+    EventService.createEventWithMatches s1e2 s1e2Matches |> ignore
+    EventService.createEventWithMatches s2e1 s2e1Matches |> ignore
+
     let season1Events = EventsDb.getEventsForSeason season1ID  |> Seq.toArray
     let season1Event1ID = season1Events.[0].ID
     let season1Event2ID = season1Events.[1].ID
     let season2Event = EventsDb.getEventsForSeason season2ID |> Seq.exactlyOne
     
-    let matches = 
-        [| makeMatch season1Event1ID ruediger  goulet    1.90M 2.10M   
-           makeMatch season1Event1ID allen     starnes   5.00M 1.10M   
-           makeMatch season1Event1ID mclellan  lobov     1.25M 4.10M   
-           makeMatch season1Event1ID condo     pfister   2.60M 1.41M   
-           makeMatch season1Event1ID potts     brenneman 2.33M 1.66M   
-           makeMatch season1Event1ID yarbrough sapp      4.32M 1.22M   
-           makeMatch season1Event1ID dada      son       10.0M 1.01M   
-           makeMatch season1Event1ID ghosn     sinosic   2.01M 1.91M   
-           makeMatch season1Event1ID miller    tuli      2.75M 1.35M   
-           makeMatch season1Event2ID ruediger  dada      3.00M 1.50M   
-           makeMatch season1Event2ID condo     mclellan  1.78M 2.10M
-           makeMatch season1Event2ID sapp      potts     1.90M 1.90M
-           makeMatch season2Event.ID sinosic   goulet    5.00M 1.10M |]
-    matches |> MatchService.createMatches |> ignore
     let event1Matches = MatchesDb.getMatchesForEvent season1Event1ID |> Seq.toArray
     let event2Matches = MatchesDb.getMatchesForEvent season1Event2ID |> Seq.toArray
     let event3Matches = MatchesDb.getMatchesForEvent season2Event.ID |> Seq.toArray

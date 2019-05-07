@@ -18,13 +18,16 @@ let createEvent (evt: Event) =
     EventsDb.insertEvent evt
 
 let createEventWithMatches (evt: Event) (matches: Match[]) =
-    EventsDb.insertEvent evt |> ignore
-    MatchesDb.insertMatches matches
+    let eventID = EventsDb.insertEvent evt
+    let matchesWithEventID = 
+        matches
+        |> Array.map (fun m -> { m with EventID = eventID })
+    MatchesDb.insertMatches matchesWithEventID
 
 let updateEvent (evt: Event) = 
     EventsDb.updateEvent evt
 
 let deleteEvent eventID =
-    let betsDeleted = BetsDb.deleteAllBetsForEvent eventID
-    let matchesDeleted = MatchesDb.deleteAllMatchesForEvent eventID
+    BetsDb.deleteAllBetsForEvent eventID |> ignore
+    MatchesDb.deleteAllMatchesForEvent eventID |> ignore
     EventsDb.deleteEvent eventID

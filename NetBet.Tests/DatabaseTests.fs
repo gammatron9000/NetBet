@@ -7,6 +7,7 @@ open Xunit
 open DatabaseFixture
 open DbCommon
 open SampleData
+open WebScraper
 
 let dbName = "NetBetDbTest"
 let connectionString = dropDatabase(dbName)
@@ -88,7 +89,7 @@ let testResolveBets() =
     let event1S2 = eventsS2 |> Seq.head
     let matchesS1E1 = MatchService.getMatchesForEvent event1S1.ID
     let matchesS2E1 = MatchService.getMatchesForEvent event1S2.ID
-    let fighterMap = getFighterMap()
+    let fighterMap = FighterService.getFightersIDLookupByName() 
 
     // all 'fighter2' in event1 are winners 
     let e1winners = matchesS1E1 |> Array.map(fun x -> x.ID, x.Fighter2ID)
@@ -146,4 +147,42 @@ let testResolveBets() =
     // 900 + 100 (stake) + 10 = $1010
     Assert.Equal(1010M, steph.CurrentCash)
     
-    ()
+ 
+[<Fact>]
+let testScrapeMapper() = 
+    Assert.Equal(connectionString, Db.ConnectionString) // force eval all the lazy crap
+    let scrapedFights = 
+        [| { Fighter1Name = "Hamfist"
+             Fighter2Name = "Chuck Steak"
+             Fighter1Odds = 1.50M
+             Fighter2Odds = 2.50M 
+             FightOrder   = 0 }
+           { Fighter1Name = "Bob Sapp"
+             Fighter2Name = "Dada 5000"
+             Fighter1Odds = 1.90M
+             Fighter2Odds = 1.90M 
+             FightOrder   = 1 } |]
+    let scrapedEvent = 
+        { EventID = "event1"
+          Name = "BigFight 28 - Hamfist vs Chuck Steak"
+          Fights = scrapedFights }
+    let s2 = SeasonService.getSeasonByName "Season2" |> Seq.exactlyOne
+    let mapped = mapScrapedEventToNetbetEvent s2.ID scrapedEvent
+    let fighterLookup = FighterService.getFightersIDLookupByName()
+    let sapp = fighterLookup.["Bob Sapp"]
+    let dada = fighterLookup.["Dada 5000"]
+    let ham  = fighterLookup.["Hamfist"]
+    let cs   = fighterLookup.["Chuck Steak"]
+    let fighter1IDs = mapped.Matches |> Array.map(fun x -> x.Fighter1ID)
+    let fighter2IDs = mapped.Matches |> Array.map(fun x -> x.Fighter2ID)
+    let expectedFighterIDs = [| sapp; dada; ham; cs |] |> Array.sort
+    let actualFighterIds = [| fighter1IDs; fighter2IDs |] |> Array.concat |> Array.sort
+    let f1Odds = mapped.Matches |> Array.map(fun x -> x.Fighter1Odds)
+    let f2Odds = mapped.Matches |> Array.map(fun x -> x.Fighter2Odds)
+    let expectedOdds = [| 1.50M; 2.50M; 1.90M; 1.90M |] |> Array.sort
+    let actualOdds = [| f1Odds; f2Odds |] |> Array.concat |> Array.sort
+     
+    Assert.Equal(scrapedEvent.Name, mapped.Event.Name)
+    Assert.Equal<_[]>(expectedFighterIDs, actualFighterIds)
+    Assert.Equal<_[]>(expectedOdds, actualOdds)
+    
