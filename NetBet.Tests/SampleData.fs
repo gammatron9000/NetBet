@@ -7,7 +7,8 @@ open Xunit
 
 let seasons = 
     [| makeSeason "Season1"
-       makeSeason "Season2" |]
+       makeSeason "Season2"
+       makeSeason "Delete Season" |]
 
 let players = 
     [| "Dustin"
@@ -38,7 +39,7 @@ let fighters =
 let insertSampleDataToDb () = 
     fighters |> Array.map FighterService.getOrInsertFighterIDByName |> ignore
     players  |> Array.map SeasonService.createPlayer |> ignore
-    seasons  |> Array.map SeasonService.createSeason |> ignore
+    seasons  |> Array.map SeasonService.createOrUpdateSeason |> ignore
     let fighterMap = FighterService.getFightersIDLookupByName()
     let ruediger  = fighterMap.["Gabe Ruediger"]
     let goulet    = fighterMap.["Jonathan Goulet"]
@@ -67,6 +68,7 @@ let insertSampleDataToDb () =
     let seasonsFromDb  = SeasonService.getAllSeasons() |> Seq.toArray
     let season1ID = seasonsFromDb.[0].ID
     let season2ID = seasonsFromDb.[1].ID
+    let season3ID = seasonsFromDb.[2].ID
 
     for s in seasonsFromDb do
         for p in playersFromDb do
@@ -75,6 +77,7 @@ let insertSampleDataToDb () =
     let s1e1 = makeEvent season1ID "Event Number One"
     let s1e2 = makeEvent season1ID "Event Number Two"
     let s2e1 = makeEvent season2ID "Season 2 Event"
+    let s3e1 = makeEvent season3ID "Delete Event"
     
     let s1e1Matches = 
         [| makeMatch ruediger  goulet    1.90M 2.10M   
@@ -95,18 +98,24 @@ let insertSampleDataToDb () =
     let s2e1Matches = 
         [| makeMatch sinosic   goulet    5.00M 1.10M |]
 
+    let s3e1Matches = 
+        [| makeMatch dada      pfister   1.91M 1.91M |]
+
     EventService.createEventWithMatches s1e1 s1e1Matches |> ignore
     EventService.createEventWithMatches s1e2 s1e2Matches |> ignore
     EventService.createEventWithMatches s2e1 s2e1Matches |> ignore
+    EventService.createEventWithMatches s3e1 s3e1Matches |> ignore
 
     let season1Events = EventsDb.getEventsForSeason season1ID  |> Seq.toArray
     let season1Event1ID = season1Events.[0].ID
     let season1Event2ID = season1Events.[1].ID
     let season2Event = EventsDb.getEventsForSeason season2ID |> Seq.exactlyOne
+    let season3Event = EventsDb.getEventsForSeason season3ID |> Seq.exactlyOne
     
     let event1Matches = MatchesDb.getMatchesForEvent season1Event1ID |> Seq.toArray
     let event2Matches = MatchesDb.getMatchesForEvent season1Event2ID |> Seq.toArray
     let event3Matches = MatchesDb.getMatchesForEvent season2Event.ID |> Seq.toArray
+    let event4Matches = MatchesDb.getMatchesForEvent season3Event.ID |> Seq.toArray
     
     let dustin = playerMap.["Dustin"]
     let jake   = playerMap.["Jake"]
@@ -118,7 +127,8 @@ let insertSampleDataToDb () =
            makeBet season1ID season1Event1ID event1Matches.[0].ID jake   ruediger 10M
            makeBet season1ID season1Event1ID event1Matches.[6].ID jake   son      10M
            makeBet season1ID season1Event1ID event1Matches.[8].ID jake   tuli     10M
-           makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet   100M |]
+           makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet   100M
+           makeBet season3ID season3Event.ID event4Matches.[0].ID steph  dada     20M |]
     singleBets |> Array.iter BetService.placeSingleBet
         
     let parlay1 =  // both win
@@ -145,10 +155,12 @@ let insertSampleDataToDb () =
     let jakeS1   = SeasonService.getSeasonPlayer season1ID jake
     let tonyS1   = SeasonService.getSeasonPlayer season1ID tony
     let stephS2  = SeasonService.getSeasonPlayer season2ID steph
+    let stephS3  = SeasonService.getSeasonPlayer season3ID steph
     Assert.Equal(930M, dustinS1.CurrentCash)
     Assert.Equal(970M, jakeS1.CurrentCash)
     Assert.Equal(950M, tonyS1.CurrentCash)
     Assert.Equal(900M, stephS2.CurrentCash)
+    Assert.Equal(980M, stephS3.CurrentCash)
 
     ()
 

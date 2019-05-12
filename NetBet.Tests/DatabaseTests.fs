@@ -27,7 +27,6 @@ let checkDbSetup() =
     let allPlayers = SeasonService.getAllPlayers()
     let allFighters = FighterService.getAllFighters()
     
-    Assert.Equal(2, allSeasons.Length)
     Assert.Equal(4, allPlayers.Length)
     Assert.Equal(18, allFighters.Length)
 
@@ -80,8 +79,8 @@ let checkDbSetup() =
 [<Fact>]
 let testResolveBets() = 
     Assert.Equal(connectionString, Db.ConnectionString) // force eval all the lazy crap
-    let season1 = SeasonService.getSeasonByName "Season1" |> Seq.exactlyOne
-    let season2 = SeasonService.getSeasonByName "Season2" |> Seq.exactlyOne
+    let season1 = SeasonService.getSeasonByName "Season1"
+    let season2 = SeasonService.getSeasonByName "Season2"
     let eventsS1 = EventService.getEventsForSeason season1.ID
     let eventsS2 = EventService.getEventsForSeason season2.ID
     let event1S1 = eventsS1 |> Seq.head
@@ -111,11 +110,11 @@ let testResolveBets() =
     for m, f in s2e1winners do
         MatchService.resolveMatch season2.ID event1S2.ID m (Nullable(f)) (Nullable(false))
         
-    let players = SeasonService.getSeasonWithPlayers season1.ID
+    let players = SeasonService.getPlayersForSeason season1.ID
     let dustin = players |> Array.filter(fun x -> x.PlayerName = "Dustin") |> Array.exactlyOne
     let jake   = players |> Array.filter(fun x -> x.PlayerName = "Jake")   |> Array.exactlyOne
     let tony   = players |> Array.filter(fun x -> x.PlayerName = "Tony")   |> Array.exactlyOne
-    let s2players = SeasonService.getSeasonWithPlayers season2.ID
+    let s2players = SeasonService.getPlayersForSeason season2.ID
     let steph  = s2players |> Array.filter(fun x -> x.PlayerName = "Stephanie") |> Array.exactlyOne
     
     // jake bets
@@ -132,7 +131,6 @@ let testResolveBets() =
     // $930 + 70 (stake) + 55 + 26.81 = $1081.81
     Assert.Equal(1081.81M, dustin.CurrentCash)
 
-    
     // tony bets
     // parlay2 = push $10
     // parlay3 = push $10
@@ -149,7 +147,27 @@ let testResolveBets() =
     
  
 [<Fact>]
-let testScrapeMapper() = 
+let testDeleteSeason () = 
+    Assert.Equal(connectionString, Db.ConnectionString) // force eval all the lazy crap
+    let s3 = SeasonService.getSeasonByName "Delete Season"
+    SeasonService.deleteSeason s3.ID |> ignore
+    let s3events = EventService.getEventsForSeason s3.ID |> Seq.map (fun x -> x.ID) |> Seq.toArray
+    let s3matches = 
+        s3events |> Seq.collect MatchService.getMatchesForEvent |> Seq.toArray
+    let s3bets = 
+        s3events |> Seq.collect BetService.getBetsForEvent |> Seq.toArray
+    let s3players = SeasonService.getPlayersForSeason s3.ID
+    Assert.Equal(0, s3events.Length)
+    Assert.Equal(0, s3matches.Length)
+    Assert.Equal(0, s3bets.Length)
+    Assert.Equal(0, s3players.Length)
+    let ex = Assert.Throws<ArgumentException>(fun _ -> SeasonService.getSeasonByName "Delete Season" |> ignore)
+    Assert.True(ex.Message.Contains("sequence was empty"))
+    ()
+   
+
+[<Fact>]
+let testScrapeMapper () = 
     Assert.Equal(connectionString, Db.ConnectionString) // force eval all the lazy crap
     let scrapedFights = 
         [| { Fighter1Name = "Hamfist"
@@ -166,7 +184,7 @@ let testScrapeMapper() =
         { EventID = "event1"
           Name = "BigFight 28 - Hamfist vs Chuck Steak"
           Fights = scrapedFights }
-    let s2 = SeasonService.getSeasonByName "Season2" |> Seq.exactlyOne
+    let s2 = SeasonService.getSeasonByName "Season2"
     let mapped = mapScrapedEventToNetbetEvent s2.ID scrapedEvent
     let fighterLookup = FighterService.getFightersIDLookupByName()
     let sapp = fighterLookup.["Bob Sapp"]

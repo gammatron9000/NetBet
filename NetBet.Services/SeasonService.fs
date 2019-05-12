@@ -3,6 +3,7 @@ module SeasonService
 
 open DbTypes
 open System
+open System.Diagnostics
 
 let getAllSeasons() = 
     SeasonsDb.getAllSeasons() |> Seq.toArray
@@ -11,14 +12,18 @@ let getSeasonByID seasonID =
     SeasonsDb.getSeasonById(seasonID) |> Seq.exactlyOne
 
 let getSeasonByName name = 
-    SeasonsDb.getSeasonByName(name) |> Seq.toArray
+    SeasonsDb.getSeasonByName(name) |> Seq.exactlyOne
 
-let createSeason (s: Season) = 
-    SeasonsDb.insertSeason(s)
-
-let updateSeason (s: Season) = 
-    SeasonsDb.updateSeason(s)
-
+let createOrUpdateSeason (s: Season) = 
+    match s.ID with 
+    | 0 -> // create 
+        let allSeasonNames = getAllSeasons() |> Array.map(fun x -> x.Name)
+        if allSeasonNames |> Array.contains(s.Name)
+        then failwithf "A Season with the name %s already exists" s.Name
+        else SeasonsDb.insertSeason(s)
+    | _ ->  // update
+        SeasonsDb.updateSeason(s)
+   
 let getAllPlayers () = 
     PlayersDb.getAllPlayers() |> Seq.toArray
 
@@ -31,14 +36,25 @@ let createPlayer name =
 let changePlayerName player =
     PlayersDb.updatePlayer player
     
-let getSeasonWithPlayers seasonID =
+let getPlayersForSeason seasonID =
     SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
 
 let getSeasonPlayer seasonID playerID =
     SeasonPlayersDb.getSeasonPlayer seasonID playerID |> Seq.exactlyOne
-
+    
 let addPlayerToSeason seasonID playerID =
     SeasonPlayersDb.addPlayerToSeason seasonID playerID
+
+let removePlayerFromSeason seasonID playerID =
+    SeasonPlayersDb.removePlayerFromSeason seasonID playerID
+
+let deleteSeason seasonID = 
+    let eventIDs = EventService.getEventsForSeason seasonID |> Array.map (fun x -> x.ID)
+    let seasonPlayerIDs = getPlayersForSeason seasonID |> Array.map (fun x -> x.PlayerID)
+    eventIDs |> Array.map EventService.deleteEvent |> ignore // this delete events, bets, and matches
+    seasonPlayerIDs |> Array.map (fun x -> removePlayerFromSeason seasonID x) |> ignore
+    SeasonsDb.deleteSeason seasonID
+    
 
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =
@@ -51,7 +67,7 @@ let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlaye
 
 let updateSeasonPlayersToDb seasonID (players: Player[]) = 
     let existingPlayerIDs = 
-        getSeasonWithPlayers(seasonID)
+        getPlayersForSeason(seasonID)
         |> Array.map(fun x -> x.PlayerID)
     let updatedPlayerIDs = 
         players |> Array.map(fun x -> x.ID)

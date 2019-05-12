@@ -3,10 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="ViewControllers\TestViewController.fs" />
+    <Compile Include="ApiControllers\SeasonController.fs" />
     <Compile Include="ApiControllers\TestController.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />

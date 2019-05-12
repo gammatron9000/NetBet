@@ -3,33 +3,21 @@
 open System
 open System.Collections.Generic
 open System.Linq
-open System.Data.SqlClient
 open Dapper
 open Microsoft.AspNetCore.Mvc
-
-type TestDbResult = 
-    {
-        testcol: string
-    }
+open DbCommon
+open DbTypes
 
 [<Route("api/[controller]")>]
 [<ApiController>]
 type ValuesController () =
     inherit ControllerBase()
-
-    let connectionString = "Server=localhost\SQLEXPRESS; Database=test; Integrated Security=true;"
-
+    
     [<HttpGet>]
     member __.Get() =
-        let values = [|"value1"; "value2"|]
-        use connection = new SqlConnection(connectionString)
-        connection.Open() |> ignore
-        let results = 
-                connection.Query<TestDbResult>("SELECT testcol FROM dbo.TestTable") 
-                |> Seq.map(fun x -> x.testcol)
-                |> Seq.toArray
-        connection.Close() |> ignore
-
+        use connection = Db.CreateConnection()
+        let fighters = connection.Query<Fighter>("SELECT * FROM dbo.Fighters")
+        let results = fighters |> Seq.map(fun x -> x.Name) |> Seq.toArray
         ActionResult<string[]>(results)
 
     [<HttpGet("{id}")>]
