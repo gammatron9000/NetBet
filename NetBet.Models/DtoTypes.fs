@@ -45,8 +45,8 @@ type BetResult =
 type EventWithMatches =
     { Event: Event
       Matches: Match[] }
+      
 
-
-type CompleteSeason =
-    { Season: SeasonPlayer
-      Events: EventWithMatches[] }
+type SeasonWithPlayers = 
+    { Season: Season
+      Players: SeasonPlayer[] }

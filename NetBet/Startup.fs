@@ -21,7 +21,7 @@ type Startup private () =
     member this.ConfigureServices(services: IServiceCollection) =
         // Add framework services.
         services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2) |> ignore
-        Db.ConnectionString <- "Server=localhost\SQLEXPRESS; Database=NetBetDb; Integrated Security=true;"
+        Db.ConnectionString <- "Server=localhost\SQLEXPRESS; Database=NetBetDbTest; Integrated Security=true;"
 
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

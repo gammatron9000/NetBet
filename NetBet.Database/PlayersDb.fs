@@ -27,6 +27,7 @@ let updatePlayer (player: Player) =
             SET Name = @Name
             WHERE ID = @ID""", player)
     
-let deletePlayer (player: Player) =
+let deletePlayer playerID =
+    let qp : QueryParamsID = { ID = playerID }
     use connection = Db.CreateConnection()
-    connection.Execute("""DELETE FROM dbo.Players WHERE ID = @ID""", player)
+    connection.Execute("""DELETE FROM dbo.Players WHERE ID = @ID""", qp)

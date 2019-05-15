@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Compile Include="ViewControllers\TestViewController.fs" />
+    <Compile Include="ApiControllers\PlayerController.fs" />
     <Compile Include="ApiControllers\SeasonController.fs" />
     <Compile Include="ApiControllers\TestController.fs" />
     <Compile Include="Startup.fs" />

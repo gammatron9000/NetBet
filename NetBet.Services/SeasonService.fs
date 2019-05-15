@@ -2,6 +2,7 @@
 module SeasonService
 
 open DbTypes
+open DtoTypes
 open System
 open System.Diagnostics
 
@@ -35,6 +36,16 @@ let createPlayer name =
 
 let changePlayerName player =
     PlayersDb.updatePlayer player
+
+let createOrUpdatePlayer (p: Player) = 
+    match p.ID with 
+    | 0 -> // create
+        let allPlayerNames = getAllPlayers() |> Array.map(fun x -> x.Name)
+        if allPlayerNames |> Array.contains(p.Name) 
+        then failwithf "A Player with the name %s already exists" p.Name
+        else createPlayer p.Name
+    | _ -> // update
+        changePlayerName p
     
 let getPlayersForSeason seasonID =
     SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
@@ -54,7 +65,19 @@ let deleteSeason seasonID =
     eventIDs |> Array.map EventService.deleteEvent |> ignore // this delete events, bets, and matches
     seasonPlayerIDs |> Array.map (fun x -> removePlayerFromSeason seasonID x) |> ignore
     SeasonsDb.deleteSeason seasonID
-    
+
+let deletePlayer playerID = 
+    PlayersDb.deletePlayer playerID
+
+let getSeasonWithPlayers seasonID = 
+    let season = SeasonsDb.getSeasonById seasonID |> Seq.exactlyOne
+    let players = SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
+    { Season = season
+      Players = players }
+
+let createSeasonWithPlayers (sp: SeasonWithPlayers) = 
+    createOrUpdateSeason sp.Season |> ignore
+    sp.Players |> Array.iter (fun x -> addPlayerToSeason x.SeasonID x.PlayerID |> ignore)
 
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =

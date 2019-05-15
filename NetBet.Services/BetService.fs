@@ -59,6 +59,7 @@ let placeParlayBet (bets: Bet[]) =
 
 let deleteBet (bet: Bet) =
     if bet.Result = Nullable() then 
+        SeasonService.givePlayerMoney bet.SeasonID bet.PlayerID bet.Stake // give the player a refund
         BetsDb.deleteBet bet
     else failwithf "This bet has already been resolved and cannot be deleted"
     

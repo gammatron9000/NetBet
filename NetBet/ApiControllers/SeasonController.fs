@@ -4,8 +4,8 @@ open System
 open System.Collections.Generic
 open System.Linq
 open Microsoft.AspNetCore.Mvc
-open DbCommon
 open DbTypes
+open DtoTypes
 
 [<Route("api/[controller]")>]
 [<ApiController>]
@@ -29,7 +29,7 @@ type SeasonController () =
 
     [<HttpGet>]
     member __.GetEmpty() =
-        let empty = 
+        let emptySeason = 
             { ID            = 0
               Name          = ""
               StartTime     = DateTime.Now
@@ -37,11 +37,14 @@ type SeasonController () =
               StartingCash  = 0
               MinimumCash   = 0
               MaxParlaySize = 0 }
-        ActionResult<Season>(empty)
+        let empty = 
+            { Season = emptySeason
+              Players = [| |] }
+        ActionResult<SeasonWithPlayers>(empty)
 
     [<HttpPost>]
-    member __.Create([<FromBody>] season: Season) =
-        SeasonService.createOrUpdateSeason season |> ignore
+    member __.Create([<FromBody>] sp: SeasonWithPlayers) =
+        SeasonService.createSeasonWithPlayers sp |> ignore
         
     [<HttpDelete("{id}")>]
     member __.Delete(id:int) =
