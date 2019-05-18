@@ -7,7 +7,7 @@ open Microsoft.AspNetCore.Mvc
 open DbTypes
 open DtoTypes
 
-[<Route("api/[controller]")>]
+[<Route("api/[controller]/[action]")>]
 [<ApiController>]
 type SeasonController () =
     inherit ControllerBase()
@@ -20,11 +20,6 @@ type SeasonController () =
     [<HttpGet("{id}")>]
     member __.GetById(id:int) =
         let season = SeasonService.getSeasonByID(id)
-        ActionResult<Season>(season)
-
-    [<HttpGet("{name}")>]
-    member __.GetByName(name: string) =
-        let season = SeasonService.getSeasonByName(name)
         ActionResult<Season>(season)
 
     [<HttpGet>]

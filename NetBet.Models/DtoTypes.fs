@@ -50,3 +50,16 @@ type EventWithMatches =
 type SeasonWithPlayers = 
     { Season: Season
       Players: SeasonPlayer[] }
+
+type FullEvent = 
+    { Event: Event
+      Matches: Match[]
+      Bets: PrettyBet[]
+      Players: SeasonPlayer[] }
+
+type ResolveMatchDto = 
+    { SeasonID : int
+      EventID  : int
+      MatchID  : int
+      WinnerID : Nullable<int>
+      IsDraw   : Nullable<bool> }

@@ -7,7 +7,7 @@ open Microsoft.AspNetCore.Mvc
 open DbTypes
 open DtoTypes
 
-[<Route("api/[controller]")>]
+[<Route("api/[controller]/[action]")>]
 [<ApiController>]
 type PlayerController () =
     inherit ControllerBase()

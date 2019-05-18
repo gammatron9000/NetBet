@@ -8,6 +8,7 @@ open DatabaseFixture
 open DbCommon
 open SampleData
 open WebScraper
+open DtoTypes
 
 let dbName = "NetBetDbTest"
 let connectionString = dropDatabase(dbName)
@@ -89,11 +90,18 @@ let testResolveBets() =
     let matchesS1E1 = MatchService.getMatchesForEvent event1S1.ID
     let matchesS2E1 = MatchService.getMatchesForEvent event1S2.ID
     let fighterMap = FighterService.getFightersIDLookupByName() 
+    
+    let makeResolution seasonID eventID matchID winnerID isDraw : ResolveMatchDto = 
+        { SeasonID = seasonID
+          EventID = eventID
+          MatchID = matchID
+          WinnerID = winnerID 
+          IsDraw = isDraw}
 
     // all 'fighter2' in event1 are winners 
     let e1winners = matchesS1E1 |> Array.map(fun x -> x.ID, x.Fighter2ID)
     for mID, f in e1winners do
-        MatchService.resolveMatch season1.ID event1S1.ID mID (Nullable(f)) (Nullable(false))
+        MatchService.resolveMatch <| makeResolution season1.ID event1S1.ID mID (Nullable(f)) (Nullable(false))
         
     // test push parlays (event2) 
     let matchesS1E2 = MatchService.getMatchesForEvent event2S1.ID
@@ -101,14 +109,14 @@ let testResolveBets() =
     // m2 = condo vs mclellan = draw
     // m3 = sapp vs potts = draw
     let ruediger = fighterMap.["Gabe Ruediger"]
-    MatchService.resolveMatch season1.ID event2S1.ID matchesS1E2.[0].ID (Nullable(ruediger)) (Nullable(false))
-    MatchService.resolveMatch season1.ID event2S1.ID matchesS1E2.[1].ID (Nullable())         (Nullable(true))
-    MatchService.resolveMatch season1.ID event2S1.ID matchesS1E2.[2].ID (Nullable())         (Nullable(true))
+    MatchService.resolveMatch <| makeResolution season1.ID event2S1.ID matchesS1E2.[0].ID (Nullable(ruediger)) (Nullable(false))
+    MatchService.resolveMatch <| makeResolution season1.ID event2S1.ID matchesS1E2.[1].ID (Nullable())         (Nullable(true))
+    MatchService.resolveMatch <| makeResolution season1.ID event2S1.ID matchesS1E2.[2].ID (Nullable())         (Nullable(true))
 
     // test other season resolve
     let s2e1winners = matchesS2E1 |> Array.map(fun x -> x.ID, x.Fighter2ID)
     for m, f in s2e1winners do
-        MatchService.resolveMatch season2.ID event1S2.ID m (Nullable(f)) (Nullable(false))
+        MatchService.resolveMatch <| makeResolution season2.ID event1S2.ID m (Nullable(f)) (Nullable(false))
         
     let players = SeasonService.getPlayersForSeason season1.ID
     let dustin = players |> Array.filter(fun x -> x.PlayerName = "Dustin") |> Array.exactlyOne

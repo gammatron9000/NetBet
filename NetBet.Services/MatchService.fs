@@ -1,6 +1,7 @@
 ﻿module MatchService
 
 open DbTypes
+open DtoTypes
 open DbCommon
 open Shared
 
@@ -31,11 +32,11 @@ let validateMatch seasonID eventID matchID =
     | _ -> failwithf "Error Trying to resolve Match %i : Event %i does not belong to Season %i" matchID eventID seasonID
 
 
-let resolveMatch seasonID eventID matchID winnerID isDraw =
-    validateMatch seasonID eventID matchID
-    MatchesDb.resolveMatch matchID winnerID isDraw |> ignore
+let resolveMatch (res: ResolveMatchDto) =
+    validateMatch res.SeasonID res.EventID res.MatchID
+    MatchesDb.resolveMatch res.MatchID res.WinnerID res.IsDraw |> ignore
     
-    match denullBool(isDraw) with 
-    | true -> BetService.pushBetsForMatch matchID |> ignore
-    | false -> BetService.resolveBets seasonID eventID matchID
+    match denullBool(res.IsDraw) with 
+    | true -> BetService.pushBetsForMatch res.MatchID |> ignore
+    | false -> BetService.resolveBets res.SeasonID res.EventID res.MatchID
     ()

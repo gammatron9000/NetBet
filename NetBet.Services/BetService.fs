@@ -19,7 +19,7 @@ let getParlayedBets (b: BetWithOdds) =
     BetsDb.getParlayedBets b |> Seq.toArray
 
 let getPrettyBetsForEvent eventID = 
-    BetsDb.getPrettyBets eventID
+    BetsDb.getPrettyBets eventID |> Seq.toArray
 
 let internal validateBet (b: Bet) =
     // verify player is in this season

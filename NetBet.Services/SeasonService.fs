@@ -75,10 +75,6 @@ let getSeasonWithPlayers seasonID =
     { Season = season
       Players = players }
 
-let createSeasonWithPlayers (sp: SeasonWithPlayers) = 
-    createOrUpdateSeason sp.Season |> ignore
-    sp.Players |> Array.iter (fun x -> addPlayerToSeason x.SeasonID x.PlayerID |> ignore)
-
 let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlayerIDs: int[]) = 
     let toRemove =
         existingPlayerIDs
@@ -88,12 +84,12 @@ let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlaye
         |> Array.filter(fun u -> existingPlayerIDs |> Array.exists(fun e -> u = e) |> not)
     toRemove, toAdd
 
-let updateSeasonPlayersToDb seasonID (players: Player[]) = 
+let updateSeasonPlayersToDb seasonID (players: SeasonPlayer[]) = 
     let existingPlayerIDs = 
         getPlayersForSeason(seasonID)
         |> Array.map(fun x -> x.PlayerID)
     let updatedPlayerIDs = 
-        players |> Array.map(fun x -> x.ID)
+        players |> Array.map(fun x -> x.PlayerID)
     let toRemove, ToAdd = calculatePlayerRemovalsAndAdditions existingPlayerIDs updatedPlayerIDs
     let removed = 
         toRemove 
@@ -104,6 +100,10 @@ let updateSeasonPlayersToDb seasonID (players: Player[]) =
         |> Array.map (fun x -> SeasonPlayersDb.addPlayerToSeason seasonID x)
         |> Array.sum
     removed + added
+
+let createSeasonWithPlayers (sp: SeasonWithPlayers) = 
+    createOrUpdateSeason sp.Season |> ignore
+    sp.Players |> updateSeasonPlayersToDb sp.Season.ID
     
 let givePlayerMoney seasonID playerID amount =
     let seasonPlayer = getSeasonPlayer seasonID playerID

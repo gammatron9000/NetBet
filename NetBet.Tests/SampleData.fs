@@ -4,6 +4,7 @@ open System
 open DbTypes
 open DataGenerators
 open Xunit
+open DtoTypes
 
 let seasons = 
     [| makeSeason "Season1"
@@ -74,37 +75,39 @@ let insertSampleDataToDb () =
         for p in playersFromDb do
             SeasonService.addPlayerToSeason s.ID p.ID |> ignore
             
-    let s1e1 = makeEvent season1ID "Event Number One"
-    let s1e2 = makeEvent season1ID "Event Number Two"
-    let s2e1 = makeEvent season2ID "Season 2 Event"
-    let s3e1 = makeEvent season3ID "Delete Event"
-    
-    let s1e1Matches = 
-        [| makeMatch ruediger  goulet    1.90M 2.10M   
-           makeMatch allen     starnes   5.00M 1.10M   
-           makeMatch mclellan  lobov     1.25M 4.10M   
-           makeMatch condo     pfister   2.60M 1.41M   
-           makeMatch potts     brenneman 2.33M 1.66M   
-           makeMatch yarbrough sapp      4.32M 1.22M   
-           makeMatch dada      son       10.0M 1.01M   
-           makeMatch ghosn     sinosic   2.01M 1.91M   
-           makeMatch miller    tuli      2.75M 1.35M |]
+    let s1e1 = 
+        { Event = makeEvent season1ID "Event Number One"
+          Matches = 
+            [| makeMatch ruediger  goulet    1.90M 2.10M   
+               makeMatch allen     starnes   5.00M 1.10M   
+               makeMatch mclellan  lobov     1.25M 4.10M   
+               makeMatch condo     pfister   2.60M 1.41M   
+               makeMatch potts     brenneman 2.33M 1.66M   
+               makeMatch yarbrough sapp      4.32M 1.22M   
+               makeMatch dada      son       10.0M 1.01M   
+               makeMatch ghosn     sinosic   2.01M 1.91M   
+               makeMatch miller    tuli      2.75M 1.35M |] }
 
-    let s1e2Matches = 
-        [| makeMatch ruediger  dada      3.00M 1.50M
-           makeMatch condo     mclellan  1.78M 2.10M
-           makeMatch sapp      potts     1.90M 1.90M |]
+    let s1e2 = 
+        { Event = makeEvent season1ID "Event Number Two"
+          Matches = 
+            [| makeMatch ruediger  dada      3.00M 1.50M
+               makeMatch condo     mclellan  1.78M 2.10M
+               makeMatch sapp      potts     1.90M 1.90M |] }
 
-    let s2e1Matches = 
-        [| makeMatch sinosic   goulet    5.00M 1.10M |]
+    let s2e1 = 
+        { Event = makeEvent season2ID "Season 2 Event"
+          Matches =
+            [| makeMatch sinosic   goulet    5.00M 1.10M |] }
 
-    let s3e1Matches = 
-        [| makeMatch dada      pfister   1.91M 1.91M |]
+    let s3e1 = 
+        { Event = makeEvent season3ID "Delete Event"
+          Matches = [| makeMatch dada      pfister   1.91M 1.91M |] }
 
-    EventService.createEventWithMatches s1e1 s1e1Matches |> ignore
-    EventService.createEventWithMatches s1e2 s1e2Matches |> ignore
-    EventService.createEventWithMatches s2e1 s2e1Matches |> ignore
-    EventService.createEventWithMatches s3e1 s3e1Matches |> ignore
+    EventService.createEventWithMatches s1e1 |> ignore
+    EventService.createEventWithMatches s1e2 |> ignore
+    EventService.createEventWithMatches s2e1 |> ignore
+    EventService.createEventWithMatches s3e1 |> ignore
 
     let season1Events = EventsDb.getEventsForSeason season1ID  |> Seq.toArray
     let season1Event1ID = season1Events.[0].ID
