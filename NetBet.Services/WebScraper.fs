@@ -94,6 +94,21 @@ let parseDate (d: string) =
     then parsedDate.AddYears(1)
     else parsedDate
 
+let getNamesAndOddsFromSelector (doc: HtmlDocument) (selector: string) = 
+    let nodes = 
+        doc.CssSelect(selector)
+        |> Seq.toArray
+    nodes 
+    |> Array.choose(fun h -> 
+        let name = getFighterNameFromHtmlNode h
+        match name with 
+        | n when String.Equals(n, "event props", StringComparison.OrdinalIgnoreCase) -> None
+        | n -> 
+            let odds = getOddsFromHtmlNode h
+            Some (n, odds)
+    )
+    |> Array.unzip
+
 let CreateEventsFromScrape () = 
     let doc = HtmlDocument.Load("https://www.bestfightodds.com")
     
@@ -118,37 +133,11 @@ let CreateEventsFromScrape () =
         
     events 
     |> Array.map(fun (id, e, date) -> 
-        let primaryBaseSelector = sprintf "#%s > div.table-inner-wrapper > div.table-scroller > table.odds-table > tbody > tr.even" id
-        let primaryBase = 
-            doc.CssSelect(primaryBaseSelector)
-            |> Seq.toArray
-        let primaryNames, primaryOdds = 
-            primaryBase 
-            |> Array.choose(fun h -> 
-                let name = getFighterNameFromHtmlNode h
-                match name with 
-                | n when String.Equals(n, "event props", StringComparison.OrdinalIgnoreCase) -> None
-                | n -> 
-                    let odds = getOddsFromHtmlNode h
-                    Some (n, odds)
-            )
-            |> Array.unzip
+        let primarySelector = sprintf "#%s > div.table-inner-wrapper > div.table-scroller > table.odds-table > tbody > tr.even" id
+        let primaryNames, primaryOdds = getNamesAndOddsFromSelector doc primarySelector
             
-        let secondaryBaseSelector = sprintf "#%s > div.table-inner-wrapper > div.table-scroller > table.odds-table > tbody > tr.odd" id
-        let secondaryBase = 
-            doc.CssSelect(secondaryBaseSelector)
-            |> Seq.toArray
-        let secondaryNames, secondaryOdds = 
-            secondaryBase 
-            |> Array.choose(fun h -> 
-                let name = getFighterNameFromHtmlNode h
-                match name with 
-                | n when n = "Event Props" -> None
-                | n -> 
-                    let odds = getOddsFromHtmlNode h
-                    Some (n, odds)
-            )
-            |> Array.unzip
+        let secondarySelector = sprintf "#%s > div.table-inner-wrapper > div.table-scroller > table.odds-table > tbody > tr.odd" id
+        let secondaryNames, secondaryOdds = getNamesAndOddsFromSelector doc secondarySelector
 
         let pairedFighters =
             primaryNames
