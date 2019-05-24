@@ -30,12 +30,17 @@ type EventController () =
     [<HttpGet("{eventid}")>]
     member __.GetEventWithMatches(eventid: int) = 
         let evt = EventService.getEventAndMatches eventid
-        ActionResult<EventWithMatches>(evt)
+        ActionResult<EventWithPrettyMatches>(evt)
 
     [<HttpGet("{eventid}")>]
     member __.GetFullEvent(eventid: int) = 
         let evt = EventService.getFullEvent eventid
         ActionResult<FullEvent>(evt)
+
+    [<HttpGet("{seasonid}")>]
+    member __.GetUpcomingEvents(seasonid: int) = 
+        let evts = EventService.getUpcomingEventsFromWeb seasonid
+        ActionResult<EventWithPrettyMatches[]>(evts)
         
     [<HttpGet>]
     member __.GetEmpty() =
@@ -47,10 +52,10 @@ type EventController () =
         let emptyEventWithMatches = 
             { Event = emptyevt
               Matches = [| |] }
-        ActionResult<EventWithMatches>(emptyEventWithMatches)
+        ActionResult<EventWithPrettyMatches>(emptyEventWithMatches)
         
     [<HttpPost>]
-    member __.CreateOrUpdate([<FromBody>] evt: EventWithMatches) =
+    member __.CreateOrUpdate([<FromBody>] evt: EventWithPrettyMatches) =
         EventService.createEventWithMatches evt
         
     [<HttpDelete("{id}")>]

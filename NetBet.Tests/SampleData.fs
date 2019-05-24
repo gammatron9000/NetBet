@@ -41,7 +41,7 @@ let insertSampleDataToDb () =
     fighters |> Array.map FighterService.getOrInsertFighterIDByName |> ignore
     players  |> Array.map SeasonService.createPlayer |> ignore
     seasons  |> Array.map SeasonService.createOrUpdateSeason |> ignore
-    let fighterMap = FighterService.getFightersIDLookupByName()
+    let fighterMap = FighterService.getFightersFullLookupByName()
     let ruediger  = fighterMap.["Gabe Ruediger"]
     let goulet    = fighterMap.["Jonathan Goulet"]
     let allen     = fighterMap.["Kenneth Allen"]
@@ -126,32 +126,32 @@ let insertSampleDataToDb () =
     let steph  = playerMap.["Stephanie"]
 
     let singleBets = 
-        [| makeBet season1ID season1Event1ID event1Matches.[0].ID dustin goulet   50M
-           makeBet season1ID season1Event1ID event1Matches.[0].ID jake   ruediger 10M
-           makeBet season1ID season1Event1ID event1Matches.[6].ID jake   son      10M
-           makeBet season1ID season1Event1ID event1Matches.[8].ID jake   tuli     10M
-           makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet   100M
-           makeBet season3ID season3Event.ID event4Matches.[0].ID steph  dada     20M |]
+        [| makeBet season1ID season1Event1ID event1Matches.[0].ID dustin goulet.ID   50M
+           makeBet season1ID season1Event1ID event1Matches.[0].ID jake   ruediger.ID 10M
+           makeBet season1ID season1Event1ID event1Matches.[6].ID jake   son.ID      10M
+           makeBet season1ID season1Event1ID event1Matches.[8].ID jake   tuli.ID     10M
+           makeBet season2ID season2Event.ID event3Matches.[0].ID steph  goulet.ID   100M
+           makeBet season3ID season3Event.ID event4Matches.[0].ID steph  dada.ID     20M |]
     singleBets |> Array.iter BetService.placeSingleBet
         
     let parlay1 =  // both win
-        [| makeBet season1ID season1Event1ID event1Matches.[3].ID dustin pfister   20M
-           makeBet season1ID season1Event1ID event1Matches.[4].ID dustin brenneman 20M |]
+        [| makeBet season1ID season1Event1ID event1Matches.[3].ID dustin pfister.ID   20M
+           makeBet season1ID season1Event1ID event1Matches.[4].ID dustin brenneman.ID 20M |]
     let parlay2 =  // ruediger wins, condo draws
-        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 10M
-           makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    10M |]
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger.ID 10M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo.ID    10M |]
     let parlay3 =  // condo draws, ruediger wins
-        [| makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo    10M
-           makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger 10M |]
+        [| makeBet season1ID season1Event2ID event2Matches.[1].ID tony condo.ID    10M
+           makeBet season1ID season1Event2ID event2Matches.[0].ID tony ruediger.ID 10M |]
     let parlay4 =  // sapp draws, mclellan draws
-        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony sapp     10M
-           makeBet season1ID season1Event2ID event2Matches.[1].ID tony mclellan 10M |]
+        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony sapp.ID     10M
+           makeBet season1ID season1Event2ID event2Matches.[1].ID tony mclellan.ID 10M |]
     let parlay5 =  // dada loses, potts draws
-        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada  10M
-           makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts 10M |]
+        [| makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada.ID  10M
+           makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts.ID 10M |]
     let parlay6 =  // potts draws, dada loses
-        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts 10M 
-           makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada  10M |]
+        [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts.ID 10M 
+           makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada.ID  10M |]
     [| parlay1; parlay2; parlay3; parlay4; parlay5; parlay6 |] |> Array.iter BetService.placeParlayBet
     
     let dustinS1 = SeasonService.getSeasonPlayer season1ID dustin 

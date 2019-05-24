@@ -2,14 +2,13 @@
 
 open DbTypes
 open DtoTypes
-open DbCommon
 open Shared
 
 let getMatchByID matchID =
     MatchesDb.getMatchByID matchID |> Seq.exactlyOne
 
 let getMatchesForEvent eventID =
-    MatchesDb.getMatchesForEvent eventID |> Seq.toArray
+    MatchesDb.getPrettyMatchesForEvent eventID |> Seq.toArray
 
 let deleteMatch matchID =
     BetsDb.deleteAllBetsForMatch matchID |> ignore

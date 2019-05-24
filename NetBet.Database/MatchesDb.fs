@@ -3,6 +3,7 @@
 open Dapper
 open DbCommon
 open DbTypes
+open DtoTypes
 
 let getMatchByID matchID = 
     let qp : QueryParamsID = { ID = matchID }
@@ -19,6 +20,18 @@ let getMatchesForEvent eventID =
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
+
+let getPrettyMatchesForEvent eventID = 
+    let qp : QueryParamsID = { ID = eventID }
+    use connection = Db.CreateConnection()
+    connection.Query<PrettyMatch>("""
+        SELECT m.ID, m.EventID, m.Fighter1ID, f1.Name as Fighter1Name, m.Fighter2ID, f2.Name as Fighter2Name, m.Fighter1Odds, m.Fighter2Odds, m.WinnerFighterID, m.LoserFighterID, m.IsDraw, m.DisplayOrder
+        FROM dbo.Matches as m
+        INNER JOIN dbo.Fighters as f1
+          ON m.Fighter1ID = f1.ID
+        INNER JOIN dbo.Fighters as f2
+          ON m.Fighter2ID = f2.ID
+        WHERE m.EventID = @ID """, qp)
 
 let insertMatch (m: Match) =
     use connection = Db.CreateConnection()

@@ -8,9 +8,9 @@ open SeasonPlayersDb
 let getEventByID eventID = 
     EventsDb.getEventByID eventID |> Seq.exactlyOne
 
-let getEventAndMatches eventID : EventWithMatches =
+let getEventAndMatches eventID : EventWithPrettyMatches =
     let event = getEventByID eventID 
-    let matches = MatchesDb.getMatchesForEvent eventID |> Seq.toArray
+    let matches = MatchesDb.getPrettyMatchesForEvent eventID |> Seq.toArray
     { Event = event; Matches = matches }
 
 let getEventsForSeason seasonID = 
@@ -19,9 +19,10 @@ let getEventsForSeason seasonID =
 let createEvent (evt: Event) = 
     EventsDb.insertEvent evt
 
-let createEventWithMatches (ewm: EventWithMatches) =
+let createEventWithMatches (ewm: EventWithPrettyMatches) =
     let evt = ewm.Event
-    let matches = ewm.Matches
+    let prettyMatches = ewm.Matches
+    let matches = prettyMatches |> Array.map Shared.mapPrettyMatchToMatch
     let eventID = EventsDb.insertEvent evt
     let matchesWithEventID = 
         matches
@@ -48,3 +49,6 @@ let deleteEvent eventID =
     MatchesDb.deleteAllMatchesForEvent eventID |> ignore
     EventsDb.deleteEvent eventID
     
+let getUpcomingEventsFromWeb seasonID =
+    WebScraper.CreateEventsFromScrape() 
+    |> Array.map (fun x -> x |> WebScraper.mapScrapedEventToNetbetEvent seasonID)

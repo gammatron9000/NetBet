@@ -21,6 +21,11 @@ let getFightersNameLookupByID () =
     |> Array.map(fun x -> x.ID, x.Name)
     |> dict
 
+let getFightersFullLookupByName () = 
+    getAllFighters()
+    |> Array.map(fun x -> x.Name, x)
+    |> dict
+
 let createFighter (fighter: Fighter) =
     FightersDb.insertFighter fighter 
 

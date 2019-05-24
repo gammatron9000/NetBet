@@ -21,7 +21,7 @@ type MatchController () =
     [<HttpGet("{eventid}")>]
     member __.GetMatchesForEvent(eventid: int) =
         let m = MatchService.getMatchesForEvent eventid
-        ActionResult<Match[]>(m)
+        ActionResult<PrettyMatch[]>(m)
         
     [<HttpGet>]
     member __.GetEmpty() =
