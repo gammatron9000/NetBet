@@ -49,6 +49,6 @@ let deleteEvent eventID =
     MatchesDb.deleteAllMatchesForEvent eventID |> ignore
     EventsDb.deleteEvent eventID
     
-let getUpcomingEventsFromWeb seasonID =
+let getUpcomingEventsFromWeb () =
     WebScraper.CreateEventsFromScrape() 
-    |> Array.map (fun x -> x |> WebScraper.mapScrapedEventToNetbetEvent seasonID)
+    |> Array.map (fun x -> x |> WebScraper.mapScrapedEventToNetbetEvent)

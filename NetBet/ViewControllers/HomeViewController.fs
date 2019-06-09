@@ -2,9 +2,9 @@
 
 open Microsoft.AspNetCore.Mvc
 
-type TestView() = 
+type HomeView() = 
     inherit Controller()
 
-    [<Route("/test")>]
+    [<Route("/")>]
     member this.Index() = 
         this.View()

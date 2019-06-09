@@ -37,9 +37,9 @@ type EventController () =
         let evt = EventService.getFullEvent eventid
         ActionResult<FullEvent>(evt)
 
-    [<HttpGet("{seasonid}")>]
-    member __.GetUpcomingEvents(seasonid: int) = 
-        let evts = EventService.getUpcomingEventsFromWeb seasonid
+    [<HttpGet>]
+    member __.GetUpcomingEvents() = 
+        let evts = EventService.getUpcomingEventsFromWeb ()
         ActionResult<EventWithPrettyMatches[]>(evts)
         
     [<HttpGet>]

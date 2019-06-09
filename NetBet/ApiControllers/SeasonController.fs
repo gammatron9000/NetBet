@@ -22,6 +22,11 @@ type SeasonController () =
         let season = SeasonService.getSeasonByID(id)
         ActionResult<Season>(season)
 
+    [<HttpGet("{id}")>]
+    member __.GetSeasonWithPlayers(id:int) =
+        let swp = SeasonService.getSeasonWithPlayers(id)
+        ActionResult<SeasonWithPlayers>(swp)
+
     [<HttpGet>]
     member __.GetEmpty() =
         let emptySeason = 

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ViewControllers\TestViewController.fs" />
+    <Compile Include="ViewControllers\HomeViewController.fs" />
     <Compile Include="ApiControllers\BetController.fs" />
     <Compile Include="ApiControllers\MatchController.fs" />
     <Compile Include="ApiControllers\EventController.fs" />
@@ -22,7 +22,7 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>

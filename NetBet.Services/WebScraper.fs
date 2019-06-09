@@ -29,10 +29,10 @@ let fighterLookup (fighterDict: IDictionary<string, int>) (name: string) =
     | true, x  -> x
     | false, _ -> FighterService.getOrInsertFighterIDByName name
 
-let mapScrapedEventToNetbetEvent seasonID (s: ScrapedEvent) : EventWithPrettyMatches =
+let mapScrapedEventToNetbetEvent (s: ScrapedEvent) : EventWithPrettyMatches =
     let evt = 
         { ID = 0
-          SeasonID = seasonID
+          SeasonID = 0
           Name = s.Name 
           StartTime = s.StartDate }
     let fighterdict = FighterService.getFightersIDLookupByName()
