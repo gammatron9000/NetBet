@@ -28,7 +28,6 @@
     <ProjectReference Include="..\NetBet.Database\NetBet.Database.fsproj" />
     <ProjectReference Include="..\NetBet.Models\NetBet.Models.fsproj" />
     <ProjectReference Include="..\NetBet.Services\NetBet.Services.fsproj" />
-    <ProjectReference Include="..\NetBet\NetBet.fsproj" />
   </ItemGroup>
 
 </Project>
