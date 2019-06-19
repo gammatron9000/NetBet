@@ -14,7 +14,7 @@ namespace NetBet.WebApp.ApiControllers
     public class SeasonController : ControllerBase
     {
         [HttpGet]
-        public Season[] Get()
+        public Season[] GetAll()
         {
             return SeasonService.getAllSeasons();
         }

@@ -1,0 +1,9 @@
+<h1>Seasons</h1>
+<table class="table table-bordered">
+    <tbody>
+        <tr *ngFor="let s of seasons">
+            <td>{{s.name}}</td>
+            <td><a class="btn btn-primary" href="#" [routerLink]="[ '/season', s.id ]">Open me</a></td>
+        </tr>
+    </tbody>
+</table>    
