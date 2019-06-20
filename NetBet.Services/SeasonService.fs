@@ -50,6 +50,14 @@ let createOrUpdatePlayer (p: Player) =
 let getPlayersForSeason seasonID =
     SeasonPlayersDb.getPlayersForSeason seasonID |> Seq.toArray
 
+let getFullSeason seasonID = 
+    let s = getSeasonByID seasonID
+    let p = getPlayersForSeason seasonID
+    let e = EventService.getEventsForSeason seasonID
+    { Season = s
+      Players = p
+      Events = e }
+
 let getSeasonPlayer seasonID playerID =
     SeasonPlayersDb.getSeasonPlayer seasonID playerID |> Seq.exactlyOne
     

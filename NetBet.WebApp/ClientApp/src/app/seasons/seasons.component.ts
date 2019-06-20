@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { Season } from "../models";
 
 @Component({
   selector: 'app-seasons-component',
@@ -17,12 +18,4 @@ export class SeasonsComponent {
 }
 
 
-interface Season {
-    StartingCash: string;
-    EndTime: Date;
-    StartTime: Date;
-    Name: string;
-    ID: number;
-    MinimumCash: number;
-    MaxParlaySize: number;
-}
+

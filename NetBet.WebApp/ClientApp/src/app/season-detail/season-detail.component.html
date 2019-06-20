@@ -1,3 +1,19 @@
-<p>
-  season-detail works!
-</p>
+<h1>{{seasonDetail.season.name}}</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-10">
+            hello
+        </div>
+        <div class="col-sm-2">
+            <table>
+                <tbody>
+                    <tr *ngFor="let p of seasonDetail.players">
+                        <td>{{p.playerName}}</td>
+                        <td>{{p.currentCash}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

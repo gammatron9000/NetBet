@@ -44,6 +44,11 @@ type SeasonWithPlayers =
     { Season: Season
       Players: SeasonPlayer[] }
 
+type FullSeason = 
+    { Season: Season
+      Players: SeasonPlayer[] 
+      Events: Event[] }
+
 type PrettyMatch = 
     { ID              : int
       EventID         : int

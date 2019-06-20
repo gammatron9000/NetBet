@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Season, SeasonPlayer, NbEvent, FullSeason } from "../models";
 
 @Component({
   selector: 'app-season-detail',
@@ -7,17 +9,19 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
   styleUrls: ['./season-detail.component.css']
 })
 export class SeasonDetailComponent implements OnInit {
-    public seasonDetail: any;
+    public seasonDetail: FullSeason;
 
-    constructor(
-        private route: ActivatedRoute,
-    ) {
-        
+    constructor(private route: ActivatedRoute, public http: HttpClient) {
     }
 
     ngOnInit() {
         let id = this.route.snapshot.paramMap.get('id');
-        console.log(id);
+        this.http.get<FullSeason>('/api/Season/GetFullSeason/' + id ).subscribe(result => {
+            let sortedPlayers = result.players.sort((n1, n2) => n1.currentCash - n2.currentCash).reverse();
+            result.players = sortedPlayers;
+            this.seasonDetail = result;
+            console.log(this.seasonDetail);
+        }, error => console.error(error));
     }
 
 }

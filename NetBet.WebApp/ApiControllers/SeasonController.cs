@@ -15,21 +15,19 @@ namespace NetBet.WebApp.ApiControllers
     {
         [HttpGet]
         public Season[] GetAll()
-        {
-            return SeasonService.getAllSeasons();
-        }
+        { return SeasonService.getAllSeasons(); }
         
         [HttpGet("{id}")]
         public Season GetById(int id)
-        {
-            return SeasonService.getSeasonByID(id);
-        }
+        { return SeasonService.getSeasonByID(id);}
 
         [HttpGet("{id}")]
         public SeasonWithPlayers GetSeasonWithPlayers(int id)
-        {
-            return SeasonService.getSeasonWithPlayers(id);
-        }
+        { return SeasonService.getSeasonWithPlayers(id); }
+
+        [HttpGet("{id}")]
+        public FullSeason GetFullSeason(int id)
+        { return SeasonService.getFullSeason(id); }
 
         [HttpGet]
         public SeasonWithPlayers GetEmpty()
@@ -51,14 +49,10 @@ namespace NetBet.WebApp.ApiControllers
         
         [HttpPost]
         public void Create([FromBody] SeasonWithPlayers sp)
-        {
-            SeasonService.createSeasonWithPlayers(sp);
-        }
+        { SeasonService.createSeasonWithPlayers(sp); }
         
         [HttpDelete("{id}")]
         public void Delete(int id)
-        {
-            SeasonService.deleteSeason(id);
-        }
+        { SeasonService.deleteSeason(id); }
     }
 }
