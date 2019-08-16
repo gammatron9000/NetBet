@@ -17,6 +17,11 @@
     }
 }
 
+export class Player {
+    public ID: number;
+    public name: string;
+}
+
 export class SeasonPlayer {
     seasonID: number;
     playerID: number;
@@ -32,6 +37,11 @@ export class SeasonPlayer {
         this.minimumCash = 0;
         this.currentCash = 0;
     }
+}
+
+export class CreateSeasonDto {
+    season: Season;
+    players: Player[];
 }
 
 export class NbEvent {

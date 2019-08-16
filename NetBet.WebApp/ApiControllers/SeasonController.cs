@@ -48,8 +48,8 @@ namespace NetBet.WebApp.ApiControllers
         }
         
         [HttpPost]
-        public void Create([FromBody] SeasonWithPlayers sp)
-        { SeasonService.createSeasonWithPlayers(sp); }
+        public void Edit([FromBody] EditSeasonDto s)
+        { SeasonService.createSeasonWithPlayers(s); }
         
         [HttpDelete("{id}")]
         public void Delete(int id)

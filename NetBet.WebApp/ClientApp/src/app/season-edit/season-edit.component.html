@@ -1,0 +1,24 @@
+
+<div style="width: 90%; padding-left: 40px;">
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="seasonName">Season Name</label>
+            <input [(ngModel)]="season.name" type="text" class="form-control" id="seasonName">
+        </div>
+        <div class="form-group">
+            <label for="startingCash">Starting Cash</label>
+            <input [(ngModel)]="season.startingCash" type="number" class="form-control" id="startingCash">
+        </div>
+        <div class="form-group">
+            <label>Players</label>
+            <ng-multiselect-dropdown [placeholder]="'Select Players'"
+                                     [data]="allPlayers"
+                                     [(ngModel)]="selectedPlayers"
+                                     [settings]="dropdownSettings">
+            </ng-multiselect-dropdown>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+
+</div>

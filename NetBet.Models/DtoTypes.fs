@@ -44,6 +44,10 @@ type SeasonWithPlayers =
     { Season: Season
       Players: SeasonPlayer[] }
 
+type EditSeasonDto = 
+    { Season: Season
+      PlayerIDs: int[] }
+
 type FullSeason = 
     { Season: Season
       Players: SeasonPlayer[] 

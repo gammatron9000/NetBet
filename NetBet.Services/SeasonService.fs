@@ -92,12 +92,10 @@ let calculatePlayerRemovalsAndAdditions (existingPlayerIDs: int[]) (updatedPlaye
         |> Array.filter(fun u -> existingPlayerIDs |> Array.exists(fun e -> u = e) |> not)
     toRemove, toAdd
 
-let updateSeasonPlayersToDb seasonID (players: SeasonPlayer[]) = 
+let updateSeasonPlayersToDb seasonID (updatedPlayerIDs: int[]) = 
     let existingPlayerIDs = 
         getPlayersForSeason(seasonID)
         |> Array.map(fun x -> x.PlayerID)
-    let updatedPlayerIDs = 
-        players |> Array.map(fun x -> x.PlayerID)
     let toRemove, ToAdd = calculatePlayerRemovalsAndAdditions existingPlayerIDs updatedPlayerIDs
     let removed = 
         toRemove 
@@ -109,9 +107,9 @@ let updateSeasonPlayersToDb seasonID (players: SeasonPlayer[]) =
         |> Array.sum
     removed + added
 
-let createSeasonWithPlayers (sp: SeasonWithPlayers) = 
-    createOrUpdateSeason sp.Season |> ignore
-    sp.Players |> updateSeasonPlayersToDb sp.Season.ID
+let createSeasonWithPlayers (s: EditSeasonDto) = 
+    createOrUpdateSeason s.Season |> ignore
+    s.PlayerIDs |> updateSeasonPlayersToDb s.Season.ID
     
 let givePlayerMoney seasonID playerID amount =
     let seasonPlayer = getSeasonPlayer seasonID playerID
