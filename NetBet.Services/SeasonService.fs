@@ -15,6 +15,10 @@ let getSeasonByID seasonID =
 let getSeasonByName name = 
     SeasonsDb.getSeasonByName(name) |> Seq.exactlyOne
 
+let getSeasonIdByName name = 
+    let s = getSeasonByName name
+    s.ID
+
 let createOrUpdateSeason (s: Season) = 
     match s.ID with 
     | 0 -> // create 
@@ -109,7 +113,12 @@ let updateSeasonPlayersToDb seasonID (updatedPlayerIDs: int[]) =
 
 let createSeasonWithPlayers (s: EditSeasonDto) = 
     createOrUpdateSeason s.Season |> ignore
-    s.PlayerIDs |> updateSeasonPlayersToDb s.Season.ID
+    let updatedSeasonID = 
+        match s.Season.ID with 
+        | 0 -> getSeasonIdByName s.Season.Name
+        | _ -> s.Season.ID
+    s.PlayerIDs |> updateSeasonPlayersToDb updatedSeasonID |> ignore
+    updatedSeasonID
     
 let givePlayerMoney seasonID playerID amount =
     let seasonPlayer = getSeasonPlayer seasonID playerID

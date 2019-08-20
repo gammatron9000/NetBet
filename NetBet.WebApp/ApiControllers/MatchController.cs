@@ -25,23 +25,6 @@ namespace NetBet.WebApp.ApiControllers
             return MatchService.getMatchesForEvent(eventid);
         }
 
-        [HttpGet]
-        public Match GetEmpty()
-        {
-            var emptyMatch = new Match();
-            emptyMatch.ID = 0;
-            emptyMatch.EventID = 0;
-            emptyMatch.Fighter1ID = 0;
-            emptyMatch.Fighter2ID = 0;
-            emptyMatch.Fighter1Odds = 0M;
-            emptyMatch.Fighter2Odds = 0M;
-            emptyMatch.WinnerFighterID = null;
-            emptyMatch.LoserFighterID = null;
-            emptyMatch.IsDraw = null;
-            emptyMatch.DisplayOrder = 0;
-            return emptyMatch;
-        }
-
         [HttpPost]
         public void ResolveMatch([FromBody] ResolveMatchDto resolve)
         {

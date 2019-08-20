@@ -32,8 +32,8 @@ let updateSeason (season: Season) =
           , StartTime = @StartTime
           , EndTime = @EndTime
           , StartingCash = @StartingCash
-          , MinimumCash =@MinimumCash
-          , MaxParlaySize = @MaxParlaySize)
+          , MinimumCash = @MinimumCash
+          , MaxParlaySize = @MaxParlaySize
         WHERE ID = @ID""", season)
 
 let deleteSeason (seasonID: int) =

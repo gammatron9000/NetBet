@@ -1,23 +1,28 @@
 
-<div style="width: 90%; padding-left: 40px;">
+<div style="width: 75%; padding-left: 40px;">
     <form (ngSubmit)="onSubmit()">
         <div class="form-group">
             <label for="seasonName">Season Name</label>
-            <input [(ngModel)]="season.name" type="text" class="form-control" id="seasonName">
+            <input [(ngModel)]="season.season.name" type="text" class="form-control" name="seasonName" id="seasonName" />
         </div>
         <div class="form-group">
             <label for="startingCash">Starting Cash</label>
-            <input [(ngModel)]="season.startingCash" type="number" class="form-control" id="startingCash">
+            <input [(ngModel)]="season.season.startingCash" type="number" class="form-control" name="startingCash" id="startingCash" />
+        </div>
+        <div class="form-group">
+            <label for="minimumCash">Minimum Cash</label>
+            <input [(ngModel)]="season.season.minimumCash" type="number" class="form-control" name="minimumCash" id="minimumCash" />
         </div>
         <div class="form-group">
             <label>Players</label>
             <ng-multiselect-dropdown [placeholder]="'Select Players'"
                                      [data]="allPlayers"
                                      [(ngModel)]="selectedPlayers"
-                                     [settings]="dropdownSettings">
+                                     [settings]="dropdownSettings"
+                                     name="playerSelect">
             </ng-multiselect-dropdown>
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary float-right">Submit</button>
     </form>
 
 

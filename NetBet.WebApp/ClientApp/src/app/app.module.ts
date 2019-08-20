@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -25,19 +28,22 @@ import { SeasonEditComponent } from './season-edit/season-edit.component';
     SeasonDetailComponent,
     SeasonEditComponent
   ],
-  imports: [
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
-    FormsModule,
-    RouterModule.forRoot([
-        { path: '', component: SeasonsComponent, pathMatch: 'full' },
-        { path: 'counter', component: CounterComponent },
-        { path: 'fetch-data', component: FetchDataComponent },
-        { path: 'seasons', component: SeasonsComponent },
-        { path: 'season/:id', component: SeasonDetailComponent },
-        { path: 'editSeason/:id', component: SeasonEditComponent },
-      ]),
-    NgMultiSelectDropDownModule.forRoot()
+    imports: [
+        CommonModule,
+        BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+        HttpClientModule,
+        FormsModule,
+        RouterModule.forRoot([
+            { path: '', component: SeasonsComponent, pathMatch: 'full' },
+            { path: 'counter', component: CounterComponent },
+            { path: 'fetch-data', component: FetchDataComponent },
+            { path: 'seasons', component: SeasonsComponent },
+            { path: 'season/:id', component: SeasonDetailComponent },
+            { path: 'season/edit/:id', component: SeasonEditComponent },
+          ]),
+        BrowserAnimationsModule,
+        NgMultiSelectDropDownModule.forRoot(),
+        ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -28,24 +28,6 @@ namespace NetBet.WebApp.ApiControllers
         [HttpGet("{id}")]
         public FullSeason GetFullSeason(int id)
         { return SeasonService.getFullSeason(id); }
-
-        [HttpGet]
-        public SeasonWithPlayers GetEmpty()
-        {
-            var emptySeason = new Season()
-            {
-                ID = 0,
-                Name = "",
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now,
-                StartingCash = 0,
-                MinimumCash = 0,
-                MaxParlaySize = 0
-            };
-            var emptyPlayers = new SeasonPlayer[] { };
-            var empty = new SeasonWithPlayers(emptySeason, emptyPlayers);
-            return empty;
-        }
         
         [HttpPost]
         public void Edit([FromBody] EditSeasonDto s)

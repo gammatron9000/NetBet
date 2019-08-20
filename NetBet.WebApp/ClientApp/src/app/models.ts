@@ -18,7 +18,7 @@
 }
 
 export class Player {
-    public ID: number;
+    public id: number;
     public name: string;
 }
 
@@ -39,9 +39,9 @@ export class SeasonPlayer {
     }
 }
 
-export class CreateSeasonDto {
+export class EditSeasonDto {
     season: Season;
-    players: Player[];
+    playerIDs: number[];
 }
 
 export class NbEvent {

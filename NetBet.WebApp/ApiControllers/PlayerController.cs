@@ -23,16 +23,7 @@ namespace NetBet.WebApp.ApiControllers
         {
             return SeasonService.getPlayersForSeason(seasonid);
         }
-
-        [HttpGet]
-        public Player GetEmpty()
-        {
-            var player = new Player();
-            player.ID = 0;
-            player.Name = "";
-            return player;
-        }
-
+        
         [HttpPost]
         public void CreateOrUpdate([FromBody] Player p)
         {
