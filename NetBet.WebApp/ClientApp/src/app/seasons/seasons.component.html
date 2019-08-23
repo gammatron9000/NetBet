@@ -7,7 +7,7 @@
                 <td width="80%"><h5>{{s.name}}</h5></td>
                 <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/season', s.id ]">Open</a></td>
                 <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/season/edit', s.id ]">Edit</a></td>
-                <td width="7%"><button class="btn btn-danger" (click)="deleteSeason(s.id)">X</button></td>
+                <td width="7%"><button class="btn btn-danger" (click)="deleteSeason(s)">X</button></td>
             </tr>
         </tbody>
     </table>    

@@ -20,15 +20,17 @@ export class SeasonsComponent {
         }, error => console.error(error));
     }
 
-    deleteSeason(id: number) {
-        this.http.delete(`/api/season/delete/${id}`).subscribe(response => {
-            this.toastr.success('Season deleted');
-            console.log('delete success', response);
-            this.refreshData();
-        }, function (error) {
-            this.toastr.error('error');
-            console.error('error deleting season: ', error);
-        });
+    deleteSeason(s: Season) {
+        if (confirm(`Are you sure you want to delete ${s.name}?`)) {
+            this.http.delete(`/api/season/delete/${s.id}`).subscribe(response => {
+                this.toastr.success('Season deleted');
+                console.log('delete success', response);
+                this.refreshData();
+            }, function (error) {
+                this.toastr.error('error');
+                console.error('error deleting season: ', error);
+            });
+        }
     }
     
 }

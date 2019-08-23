@@ -21,6 +21,10 @@ namespace NetBet.WebApp.ApiControllers
         public Season GetById(int id)
         { return SeasonService.getSeasonByID(id);}
 
+        [HttpGet("{name}")]
+        public int GetSeasonIdByName(string name)
+        { return SeasonService.getSeasonIdByName(name); }
+
         [HttpGet("{id}")]
         public SeasonWithPlayers GetSeasonWithPlayers(int id)
         { return SeasonService.getSeasonWithPlayers(id); }

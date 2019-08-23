@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Season, SeasonPlayer, NbEvent, FullSeason, Player, EditSeasonDto } from "../models";
 
@@ -50,11 +50,16 @@ export class SeasonEditComponent implements OnInit {
         this.http.post('/api/season/Edit', dto).subscribe(response => {
             this.toastr.success('Season saved');
             console.log('save success', response);
-            debugger;
+            if (this.season.season.id === 0) {
+                this.http.get<number>('/api/Season/GetSeasonIdByName/' + this.season.season.name).subscribe(result => {
+                    this.refreshPage(result);
+                });
+            }
+            
         }, function (error) {
             this.toastr.error('error');
             console.error('error saving season: ', error);
-        });
+            });
     }
 
     refreshPage(id: number) {
