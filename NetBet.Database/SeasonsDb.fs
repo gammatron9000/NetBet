@@ -32,10 +32,11 @@ let updateSeason (season: Season) =
           , StartTime = @StartTime
           , EndTime = @EndTime
           , StartingCash = @StartingCash
-          , MinimumCash =@MinimumCash
-          , MaxParlaySize = @MaxParlaySize)
+          , MinimumCash = @MinimumCash
+          , MaxParlaySize = @MaxParlaySize
         WHERE ID = @ID""", season)
 
-let deleteSeason (season: Season) =
+let deleteSeason (seasonID: int) =
+    let qp : QueryParamsID = { ID = seasonID }
     use connection = Db.CreateConnection()
-    connection.Execute("""DELETE FROM dbo.Seasons WHERE ID = @ID""", season)
+    connection.Execute("""DELETE FROM dbo.Seasons WHERE ID = @ID""", qp)

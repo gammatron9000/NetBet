@@ -40,13 +40,46 @@ type BetResult =
             | x when x = (Push |> BetResult.GetCode) -> Push
             | _ -> failwithf "Unknown BetResult code: %i" code
 
+type SeasonWithPlayers = 
+    { Season: Season
+      Players: SeasonPlayer[] }
 
+type EditSeasonDto = 
+    { Season: Season
+      PlayerIDs: int[] }
 
-type EventWithMatches =
+type FullSeason = 
+    { Season: Season
+      Players: SeasonPlayer[] 
+      Events: Event[] }
+
+type PrettyMatch = 
+    { ID              : int
+      EventID         : int
+      Fighter1ID      : int
+      Fighter1Name    : string
+      Fighter2ID      : int
+      Fighter2Name    : string
+      Fighter1Odds    : decimal
+      Fighter2Odds    : decimal
+      WinnerFighterID : Nullable<int>
+      LoserFighterID  : Nullable<int>
+      IsDraw          : Nullable<bool>
+      DisplayOrder    : int }
+
+type FullEvent = 
     { Event: Event
-      Matches: Match[] }
+      Matches: PrettyMatch[]
+      Bets: PrettyBet[]
+      Players: SeasonPlayer[] }
 
-
-type CompleteSeason =
-    { Season: SeasonPlayer
-      Events: EventWithMatches[] }
+type ResolveMatchDto = 
+    { SeasonID : int
+      EventID  : int
+      MatchID  : int
+      WinnerID : Nullable<int>
+      IsDraw   : Nullable<bool> }
+    
+type EventWithPrettyMatches = 
+    { Event: Event
+      Matches: PrettyMatch[] }

@@ -2,6 +2,7 @@
 
 open DbTypes
 open System
+open DtoTypes
 
 let makeSeason name =
     { ID            = 0
@@ -23,17 +24,13 @@ let makeEvent seasonID name =
       Name      = name
       StartTime = DateTime.Now.AddHours(1.0) }
 
-let makeFighter name = 
-    { ID = 0
-      Name = name
-      Image = [||] 
-      ImageLink = "" }
-
-let makeMatch eventID fighter1ID fighter2ID fighter1Odds fighter2Odds = 
+let makeMatch (fighter1: Fighter) (fighter2: Fighter) fighter1Odds fighter2Odds : PrettyMatch = 
     { ID              = 0
-      EventID         = eventID
-      Fighter1ID      = fighter1ID
-      Fighter2ID      = fighter2ID
+      EventID         = 0
+      Fighter1ID      = fighter1.ID
+      Fighter2ID      = fighter2.ID
+      Fighter1Name    = fighter1.Name
+      Fighter2Name    = fighter2.Name
       Fighter1Odds    = fighter1Odds
       Fighter2Odds    = fighter2Odds
       WinnerFighterID = Nullable()
