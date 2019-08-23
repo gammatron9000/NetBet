@@ -1,0 +1,35 @@
+<div class="mainContainer">
+    <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="eventName">Event Name</label>
+            <input [(ngModel)]="evnt.event.name" type="text" class="form-control" name="eventName" id="eventName" />
+        </div>
+        <div class="form-group">
+            <label>Matches</label>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Fighter 1</th>
+                        <th>Odds</th>
+                        <th></th>
+                        <th>Fighter 2</th>
+                        <th>Odds</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let m of evnt.matches">
+                        <td width="30%"><input [(ngModel)]="m.fighter1Name" type="text" class="form-control" name="{{m.fighter1Name}}" /></td>
+                        <td width="10%"><input [(ngModel)]="m.fighter1Odds" type="number" step="0.01" class="form-control" name="{{m.fighter1Odds}}" /></td>
+                        <td width="7%">VS</td>
+                        <td width="30%"><input [(ngModel)]="m.fighter2Name" type="text" class="form-control" name="{{m.fighter2Name}}" /></td>
+                        <td width="10%"><input [(ngModel)]="m.fighter2Odds" type="number" step="0.01" class="form-control" name="{{m.fighter2Odds}}" /></td>
+                        <td width="7%"><button class="btn btn-danger" type="button" (click)="deleteMatch(m)">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary float-right">Submit</button>
+    </form>
+</div>

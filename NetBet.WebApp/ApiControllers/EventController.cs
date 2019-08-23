@@ -42,15 +42,7 @@ namespace NetBet.WebApp.ApiControllers
         {
             return EventService.getUpcomingEventsFromWeb();
         }
-
-        [HttpGet]
-        public EventWithPrettyMatches GetEmpty()
-        {
-            var emptyevt = new Event();
-            var emptyMatches = new PrettyMatch[] { };
-            return new EventWithPrettyMatches(emptyevt, emptyMatches);
-        }
-
+        
         [HttpPost]
         public void CreateOrUpdate([FromBody] EventWithPrettyMatches evt)
         {

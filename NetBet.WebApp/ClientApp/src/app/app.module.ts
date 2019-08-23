@@ -16,6 +16,8 @@ import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { SeasonsComponent } from './seasons/seasons.component';
 import { SeasonDetailComponent } from './season-detail/season-detail.component';
 import { SeasonEditComponent } from './season-edit/season-edit.component';
+import { EventEditComponent } from './event-edit/event-edit.component';
+import { EventEasyComponent } from './event-easy/event-easy.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { SeasonEditComponent } from './season-edit/season-edit.component';
     FetchDataComponent,
     SeasonsComponent,
     SeasonDetailComponent,
-    SeasonEditComponent
+    SeasonEditComponent,
+    EventEditComponent,
+    EventEasyComponent
   ],
     imports: [
         CommonModule,
@@ -40,6 +44,8 @@ import { SeasonEditComponent } from './season-edit/season-edit.component';
             { path: 'seasons', component: SeasonsComponent },
             { path: 'season/:id', component: SeasonDetailComponent },
             { path: 'season/edit/:id', component: SeasonEditComponent },
+            { path: 'event/edit/:id', component: EventEditComponent },
+            { path: 'event/easyEvent', component: EventEasyComponent }
           ]),
         BrowserAnimationsModule,
         NgMultiSelectDropDownModule.forRoot(),

@@ -57,7 +57,6 @@ export class NbEvent {
     }
 }
 
-
 export class FullSeason {
     public season: Season;
     public players: SeasonPlayer[];
@@ -66,5 +65,43 @@ export class FullSeason {
         this.events = [];
         this.players = [];
         this.season = new Season();
+    }
+}
+
+export class PrettyMatch {
+    public id: number;
+    public eventID: number;
+    public fighter1ID: number;
+    public fighter2ID: number;
+    public fighter1Name: string;
+    public fighter2Name: string;
+    public fighter1Odds: number;
+    public fighter2Odds: number;
+    public winnerFighterID: number;
+    public loserFighterID: number;
+    public isDraw: boolean;
+    public displayOrder: number;
+    constructor() {
+        this.id = 0;
+        this.eventID = 0;
+        this.fighter1ID = 0;
+        this.fighter2ID = 0;
+        this.fighter1Name = '';
+        this.fighter2Name = '';
+        this.fighter1Odds = 0.0;
+        this.fighter2Odds = 0.0;
+        this.winnerFighterID = null;
+        this.loserFighterID = null;
+        this.isDraw = null;
+        this.displayOrder = 0;
+    }
+}
+
+export class EventWithPrettyMatches {
+    public event: NbEvent;
+    public matches: PrettyMatch[]; 
+    constructor() {
+        this.event = new NbEvent();
+        this.matches = [];
     }
 }
