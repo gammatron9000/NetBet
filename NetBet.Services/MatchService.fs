@@ -16,10 +16,7 @@ let deleteMatch matchID =
 
 let createMatch (m: Match) = 
     MatchesDb.insertMatch m
-
-let createMatches (matches: Match[]) = 
-    MatchesDb.insertMatches matches
-
+    
 let validateMatch seasonID eventID matchID = 
     let m = getMatchByID matchID
     let e = EventService.getEventByID eventID

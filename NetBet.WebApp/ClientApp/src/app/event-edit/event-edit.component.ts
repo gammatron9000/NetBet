@@ -13,13 +13,13 @@ export class EventEditComponent implements OnInit {
     public evnt: EventWithPrettyMatches = new EventWithPrettyMatches();
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
-        this.refreshData();
+        let id = this.route.snapshot.paramMap.get('id');
+        this.refreshData(id);
     }
 
     ngOnInit() { }
 
-    refreshData() {
-        let id = this.route.snapshot.paramMap.get('id');
+    refreshData(id) {
         this.http.get<EventWithPrettyMatches>('/api/event/getEventWithMatches/' + id).subscribe(result => {
             let sortedMatches = result.matches.sort((m1, m2) => m1.displayOrder - m2.displayOrder);
             result.matches = sortedMatches;
@@ -30,6 +30,22 @@ export class EventEditComponent implements OnInit {
 
     deleteMatch(m: PrettyMatch) {
         console.log('delete match clicked');
+    }
+
+    onSubmit() {
+        this.http.post('/api/event/CreateOrUpdate', this.evnt).subscribe(response => {
+            this.toastr.success('Event saved');
+            console.log('save success', response);
+            if (this.evnt.event.id === 0) {
+                this.http.get<number>('/api/event/GetEventIDByName/' + this.evnt.event.name).subscribe(result => {
+                this.refreshData(result);
+                });
+            }
+        }, function (error) {
+            this.toastr.error('error');
+            console.error('error saving event: ', error);
+        });
+
     }
 
 }

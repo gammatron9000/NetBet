@@ -104,10 +104,10 @@ let insertSampleDataToDb () =
         { Event = makeEvent season3ID "Delete Event"
           Matches = [| makeMatch dada      pfister   1.91M 1.91M |] }
 
-    EventService.createEventWithMatches s1e1 |> ignore
-    EventService.createEventWithMatches s1e2 |> ignore
-    EventService.createEventWithMatches s2e1 |> ignore
-    EventService.createEventWithMatches s3e1 |> ignore
+    EventService.createOrUpdateEventWithMatches s1e1 |> ignore
+    EventService.createOrUpdateEventWithMatches s1e2 |> ignore
+    EventService.createOrUpdateEventWithMatches s2e1 |> ignore
+    EventService.createOrUpdateEventWithMatches s3e1 |> ignore
 
     let season1Events = EventsDb.getEventsForSeason season1ID  |> Seq.toArray
     let season1Event1ID = season1Events.[0].ID

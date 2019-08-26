@@ -38,19 +38,46 @@ let insertMatch (m: Match) =
     connection.Execute("""
         INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder)
         VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw, @DisplayOrder )""", m)
-
-let insertMatches (matches: Match[]) =
-    let mutable allResults = 0
-    for m in matches do 
-        let queryResult = insertMatch m
-        allResults <- allResults + queryResult
-    allResults
+        |> ignore
 
 let deleteMatch matchID = 
     let qp : QueryParamsID = { ID = matchID }
     use connection = Db.CreateConnection()
     connection.Execute("""
         DELETE FROM dbo.Matches WHERE ID = @ID""", qp)
+        |> ignore
+        
+let updateMatch (m: Match) =
+    use connection = Db.CreateConnection()
+    connection.Execute("""
+        UPDATE dbo.Matches
+        SET Fighter1ID = @Fighter1ID, Fighter2ID = @Fighter2ID, Fighter1Odds = @Fighter1Odds, Fighter2Odds = @Fighter2Odds, WinnerFighterID = @WinnerFighterID, LoserFighterID = @LoserFighterID, IsDraw = @IsDraw, DisplayOrder = @DisplayOrder
+        WHERE ID = @ID""", m)
+    |> ignore
+
+let insertOrUpdateMatches (newMatches: Match[]) (existingMatches: Match[]) = 
+    // remove deleted matches
+    let newMatchIDs = newMatches |> Array.map (fun x -> x.ID) 
+    let toRemoveIDs = 
+        existingMatches 
+        |> Array.map (fun x -> x.ID)
+        |> Array.filter (fun e -> newMatchIDs |> Array.exists(fun u -> e = u ) |> not)
+    toRemoveIDs |> Array.iter deleteMatch
+    
+    // add new matches 
+    let toAdd = newMatches |> Array.filter(fun x -> x.ID = 0)
+    toAdd |> Array.iter insertMatch
+
+    // update existing matches
+    let toUpdateIDs = 
+        newMatches
+        |> Array.map(fun x -> x.ID)
+        |> Array.filter (fun e -> toRemoveIDs |> Array.exists(fun u -> e = u) |> not) // not being removed
+        |> Array.filter (fun e -> e = 0 |> not) // not new
+    newMatches 
+        |> Array.filter(fun m -> toUpdateIDs |> Array.exists(fun i -> i = m.ID))
+        |> Array.iter updateMatch
+    ()
 
 let resolveMatch matchID winnerID isDraw =
     let qp : QueryParamsResolveMatch =

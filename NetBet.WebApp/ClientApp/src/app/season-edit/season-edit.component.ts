@@ -55,7 +55,6 @@ export class SeasonEditComponent implements OnInit {
                     this.refreshPage(result);
                 });
             }
-            
         }, function (error) {
             this.toastr.error('error');
             console.error('error saving season: ', error);

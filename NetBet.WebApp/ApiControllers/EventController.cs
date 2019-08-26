@@ -37,6 +37,12 @@ namespace NetBet.WebApp.ApiControllers
             return EventService.getFullEvent(eventid);
         }
 
+        [HttpGet("{eventName}")]
+        public int GetEventIDByName(string eventName)
+        {
+            return EventService.getEventIDByName(eventName);
+        }
+
         [HttpGet]
         public EventWithPrettyMatches[] GetUpcomingEventsFromWeb()
         {
@@ -46,7 +52,7 @@ namespace NetBet.WebApp.ApiControllers
         [HttpPost]
         public void CreateOrUpdate([FromBody] EventWithPrettyMatches evt)
         {
-            EventService.createEventWithMatches(evt);
+            EventService.createOrUpdateEventWithMatches(evt);
         }
         
         [HttpDelete("{id}")]

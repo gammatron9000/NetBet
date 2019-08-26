@@ -12,6 +12,14 @@ let getEventByID eventID =
         FROM dbo.Events
         WHERE ID = @ID""", qp)
 
+let getEventByName eventName = 
+    let qp : QueryParamsName = { Name = eventName }
+    use connection = Db.CreateConnection()
+    connection.Query<Event>("""
+        SELECT ID, SeasonID, Name, StartTime
+        FROM dbo.Events
+        WHERE Name = @Name""", qp)
+
 let getEventsForSeason seasonID =
     let qp : QueryParamsID = { ID = seasonID }
     use connection = Db.CreateConnection()
@@ -21,7 +29,7 @@ let getEventsForSeason seasonID =
         WHERE SeasonID = @ID""", qp)
 
 // returns the id of the event it will create
-let insertEvent (evt: Event) = 
+let insertOrUpdateEvent (evt: Event) = 
     use connection = Db.CreateConnection()
     connection.QuerySingle<int>("""
         IF NOT EXISTS
@@ -35,7 +43,11 @@ let insertEvent (evt: Event) =
         END
         ELSE 
         BEGIN 
-            SELECT 0
+            UPDATE dbo.Events
+            SET Name = @Name
+              , StartTime = @StartTime
+            WHERE ID = @ID
+            SELECT @ID
         END
         """, evt)
 
@@ -44,11 +56,4 @@ let deleteEvent eventID =
     use connection = Db.CreateConnection()
     connection.Execute("""
         DELETE FROM dbo.Events WHERE ID = @ID""", qp)
-
-let updateEvent (evt: Event) = 
-    use connection = Db.CreateConnection()
-    connection.Execute("""
-        UPDATE dbo.Events
-        SET Name = @Name
-          , StartTime = @StartTime
-        WHERE ID = @ID""", evt)
+        
