@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { EventWithPrettyMatches, PrettyMatch, NbEvent } from "../models";
+import { EventWithPrettyMatches, PrettyMatch } from "../models";
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -11,10 +11,11 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class EventEditComponent implements OnInit {
     public evnt: EventWithPrettyMatches = new EventWithPrettyMatches();
+    private eventID = 0;
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
-        let id = this.route.snapshot.paramMap.get('id');
-        this.refreshData(id);
+        this.eventID = Number(this.route.snapshot.paramMap.get('id'));
+        this.refreshData(this.eventID);
     }
 
     ngOnInit() { }
@@ -29,7 +30,21 @@ export class EventEditComponent implements OnInit {
     }
 
     deleteMatch(m: PrettyMatch) {
-        console.log('delete match clicked');
+        const index: number = this.evnt.matches.indexOf(m);
+        if (index !== -1) {
+            this.evnt.matches.splice(index, 1);
+        }
+        // resequence the display orders
+        for (let i = 0; i < this.evnt.matches.length; i++) {
+            this.evnt.matches[i].displayOrder = i;
+        }
+    }
+
+    addMatch() {
+        var newMatch = new PrettyMatch();
+        newMatch.displayOrder = this.evnt.matches.length;
+        newMatch.eventID = this.eventID;
+        this.evnt.matches.push(newMatch);
     }
 
     onSubmit() {

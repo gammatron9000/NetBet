@@ -1,3 +1,8 @@
-<p>
-  event-easy works!
-</p>
+<div class="mainContainer">
+    <a class="btn btn-primary" href="#" [routerLink]="[ '/season', seasonID ]">Back to Season</a>
+    <h3>Available Events</h3>
+    <select (change)="changeSelectedEvent($event.target.value)">
+        <option *ngFor="let e of events" value={{e}}>{{e.event.name}}</option>
+    </select>
+    <button (click)="test()">test</button>
+</div>

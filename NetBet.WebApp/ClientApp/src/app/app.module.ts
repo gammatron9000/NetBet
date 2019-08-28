@@ -45,7 +45,7 @@ import { EventEasyComponent } from './event-easy/event-easy.component';
             { path: 'season/:id', component: SeasonDetailComponent },
             { path: 'season/edit/:id', component: SeasonEditComponent },
             { path: 'event/edit/:id', component: EventEditComponent },
-            { path: 'event/easyEvent', component: EventEasyComponent }
+            { path: 'event/easyEvent/:seasonID', component: EventEasyComponent }
           ]),
         BrowserAnimationsModule,
         NgMultiSelectDropDownModule.forRoot(),
