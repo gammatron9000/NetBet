@@ -3,6 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Season, SeasonPlayer, NbEvent, FullSeason } from "../models";
 import { ToastrService } from 'ngx-toastr';
+import { faTrophy, faStar, faFrown } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-season-detail',
@@ -11,6 +12,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SeasonDetailComponent implements OnInit {
     public seasonDetail = new FullSeason();
+    public faTrophy = faTrophy;
+    public faStar = faStar;
+    public faFrown = faFrown;
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
         this.refreshData();
@@ -41,4 +45,12 @@ export class SeasonDetailComponent implements OnInit {
             });
         }
     }
+
+    getStarColor(i) {
+        if (i === 0) { return 'gold'; }
+        else if (i === 1) { return 'silver'; }
+        else if (i === 2) { return 'brown'; }
+        else return 'black';
+    }
+
 }

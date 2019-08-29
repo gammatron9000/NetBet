@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { ToastrModule } from 'ngx-toastr';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -49,7 +50,8 @@ import { EventEasyComponent } from './event-easy/event-easy.component';
           ]),
         BrowserAnimationsModule,
         NgMultiSelectDropDownModule.forRoot(),
-        ToastrModule.forRoot()
+        ToastrModule.forRoot(),
+        FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

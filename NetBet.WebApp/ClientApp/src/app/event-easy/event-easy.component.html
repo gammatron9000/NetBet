@@ -1,8 +1,13 @@
 <div class="mainContainer">
     <a class="btn btn-primary" href="#" [routerLink]="[ '/season', seasonID ]">Back to Season</a>
     <h3>Available Events</h3>
-    <select (change)="changeSelectedEvent($event.target.value)">
-        <option *ngFor="let e of events" value={{e}}>{{e.event.name}}</option>
-    </select>
-    <button (click)="test()">test</button>
+    <form (ngSubmit)="onSubmit()">
+        <div style="margin-bottom: 25px;">
+            <select [(ngModel)]="selectedEvent"
+                    name="eventSelector">
+                <option *ngFor="let e of events" [(ngValue)]="e">{{e.event.name}}</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
