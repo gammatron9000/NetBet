@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Season, SeasonPlayer, NbEvent, FullSeason } from "../models";
+import { Season, SeasonPlayer, NbEvent, FullSeason, SeasonWinPercent } from "../models";
 import { ToastrService } from 'ngx-toastr';
 import { faTrophy, faStar, faFrown } from '@fortawesome/free-solid-svg-icons'
 
@@ -12,6 +12,7 @@ import { faTrophy, faStar, faFrown } from '@fortawesome/free-solid-svg-icons'
 })
 export class SeasonDetailComponent implements OnInit {
     public seasonDetail = new FullSeason();
+    public stats: SeasonWinPercent[] = [];
     public faTrophy = faTrophy;
     public faStar = faStar;
     public faFrown = faFrown;
@@ -29,6 +30,12 @@ export class SeasonDetailComponent implements OnInit {
             result.players = sortedPlayers;
             this.seasonDetail = result;
             console.log(this.seasonDetail);
+        }, error => console.error(error));
+
+        this.http.get<SeasonWinPercent[]>('/api/bet/GetBetStatsForSeason/' + id).subscribe(result => {
+            let sortedStats = result.sort((n1, n2) => n1.winPercent - n2.winPercent).reverse();
+            this.stats = sortedStats;
+            console.log(this.stats);
         }, error => console.error(error));
     }
 

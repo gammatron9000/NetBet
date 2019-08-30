@@ -26,6 +26,7 @@
                 </table>
             </div>
             <div class="col-sm-2">
+                <h4>Standings</h4>
                 <table class="table table-bordered">
                     <tbody>
                         <tr *ngFor="let p of seasonDetail.players; index as i">
@@ -37,6 +38,16 @@
                             </td>
                             <td>{{p.playerName}}</td>
                             <td>{{p.currentCash | currency}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Win Percent</h4>
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr *ngFor="let s of stats">
+                            <td>{{s.playerName}}</td>
+                            <td>{{s.winPercent | percent}}</td>
                         </tr>
                     </tbody>
                 </table>

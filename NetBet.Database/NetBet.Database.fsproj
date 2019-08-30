@@ -9,6 +9,7 @@
     <Compile Include="DbUpgrader.fs" />
     <EmbeddedResource Include="DbScripts\0000 - Schema.sql" />
     <EmbeddedResource Include="DbScripts\0001 - getPrettyNames func.sql" />
+    <EmbeddedResource Include="DbScripts\0002 - getBetsForSeason func.sql" />
     <Compile Include="DbCommon.fs" />
     <Compile Include="BetsDb.fs" />
     <Compile Include="FightersDb.fs" />

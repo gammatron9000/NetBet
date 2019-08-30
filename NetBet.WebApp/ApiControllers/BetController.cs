@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using static DbTypes;
+using static DtoTypes;
 
 namespace NetBet.WebApp.ApiControllers
 {
@@ -46,6 +47,12 @@ namespace NetBet.WebApp.ApiControllers
         public void Delete([FromBody] Bet b)
         {
             BetService.deleteBet(b);
+        }
+
+        [HttpGet("{seasonID}")]
+        public SeasonWinPercent[] GetBetStatsForSeason(int seasonID)
+        {
+            return BetService.getBetStatsForSeason(seasonID);
         }
     }
 }

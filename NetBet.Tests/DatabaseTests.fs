@@ -19,7 +19,7 @@ SampleData.insertSampleDataToDb() |> ignore
 [<Fact>]
 let dbUpgradeTest() =
     Assert.Equal(true, dbUpgradeResult.Successful)
-    Assert.Equal(2, dbUpgradeResult.Scripts.Count())
+    Assert.Equal(3, dbUpgradeResult.Scripts.Count())
 
 [<Fact>]
 let checkDbSetup() = 

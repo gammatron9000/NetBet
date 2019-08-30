@@ -121,3 +121,10 @@ let getPrettyBets eventID =
     use connection = Db.CreateConnection()
     connection.Query<PrettyBet>("""
         SELECT * FROM getPrettyBetsForEvent(@EventID)""", qp)
+
+let getAllBetsForSeason seasonID = 
+    let qp: QueryParamsID = 
+        { ID = seasonID }
+    use connection = Db.CreateConnection()
+    connection.Query<PrettyBet>("""
+        SELECT * FROM getPrettyBetsForSeason(@ID)""", qp)

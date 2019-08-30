@@ -105,3 +105,12 @@ export class EventWithPrettyMatches {
         this.matches = [];
     }
 }
+
+export class SeasonWinPercent {
+    public playerName: string;
+    public winPercent: number;
+    constructor() {
+        this.playerName = '';
+        this.winPercent = 0.0;
+    }
+}

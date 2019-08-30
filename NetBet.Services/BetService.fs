@@ -140,3 +140,25 @@ let resolveBets (seasonID: int) (eventID: int) (matchID: int) =
         | None   -> ()
         | Some x -> SeasonService.givePlayerMoney b.SeasonID b.PlayerID x
     ()
+
+
+let getPercentOfWinningBets (bets: PrettyBet[]) =
+    let winCode = BetResult.GetCode(Win)
+    let pushCode = BetResult.GetCode(Push)
+    let pushBetsRemoved = bets |> Array.filter(fun x -> x.Result = Nullable(pushCode) |> not)
+
+    // need to group by PARLAYID somehow and count all the parlay bets as one
+
+    let winCount = pushBetsRemoved |> Array.filter(fun x -> x.Result = Nullable(winCode)) |> Array.length |> decimal
+    winCount / (bets.Length |> decimal)
+
+
+let getBetStatsForSeason (seasonID: int) = 
+    BetsDb.getAllBetsForSeason seasonID 
+    |> Seq.toArray 
+    |> Array.filter(fun x -> x.Result = Nullable())
+    |> Array.groupBy(fun x -> x.PlayerName)
+    |> Array.map(fun (player, bets) -> 
+        { PlayerName = player
+          WinPercent = bets |> getPercentOfWinningBets })
+    

@@ -83,3 +83,7 @@ type ResolveMatchDto =
 type EventWithPrettyMatches = 
     { Event: Event
       Matches: PrettyMatch[] }
+
+type SeasonWinPercent = 
+    { PlayerName: string
+      WinPercent: decimal }
