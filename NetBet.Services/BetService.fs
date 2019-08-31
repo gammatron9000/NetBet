@@ -143,20 +143,29 @@ let resolveBets (seasonID: int) (eventID: int) (matchID: int) =
 
 
 let getPercentOfWinningBets (bets: PrettyBet[]) =
-    let winCode = BetResult.GetCode(Win)
-    let pushCode = BetResult.GetCode(Push)
-    let pushBetsRemoved = bets |> Array.filter(fun x -> x.Result = Nullable(pushCode) |> not)
-
-    // need to group by PARLAYID somehow and count all the parlay bets as one
-
-    let winCount = pushBetsRemoved |> Array.filter(fun x -> x.Result = Nullable(winCode)) |> Array.length |> decimal
-    winCount / (bets.Length |> decimal)
+    let parlayGroups = bets |> Array.groupBy(fun x -> x.ParlayID)
+    // remove bets where ALL of the results are push
+    let allPushes = 
+        parlayGroups
+        |> Array.filter(fun (_, parlayBets) -> 
+            parlayBets |> Array.forall(fun x -> x.Result = Nullable(Push.Code))) 
+        |> Array.map(fun (guid, _) -> guid)
+    let allNonPushGroups = 
+        parlayGroups
+        |> Array.filter(fun (guid, bets) -> allPushes |> Array.contains(guid) |> not)
+    let winCount =
+        allNonPushGroups
+        |> Array.filter(fun (_, parlayBets) -> 
+            parlayBets 
+            |> Array.forall(fun x -> x.Result = Nullable(Win.Code) || x.Result = Nullable(Push.Code)))
+        |> Array.length 
+        |> decimal
+    winCount / (allNonPushGroups.Length |> decimal)
 
 
 let getBetStatsForSeason (seasonID: int) = 
     BetsDb.getAllBetsForSeason seasonID 
     |> Seq.toArray 
-    |> Array.filter(fun x -> x.Result = Nullable())
     |> Array.groupBy(fun x -> x.PlayerName)
     |> Array.map(fun (player, bets) -> 
         { PlayerName = player

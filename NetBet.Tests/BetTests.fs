@@ -3,6 +3,8 @@
 open System
 open Xunit
 open BetService
+open DbTypes
+open DtoTypes
 
 [<Fact>]
 let ``Calculate single bet winnings`` () = 
@@ -24,3 +26,60 @@ let ``Calculate parlay bet winnings`` () =
     Assert.Equal(5.06M,  test2)
     Assert.Equal(37.00M,  test3)
     Assert.Equal(24675.00M, test4)
+
+
+let internal mapBetToPrettyBet(b: Bet) =
+    { SeasonID     = b.SeasonID
+      EventID      = b.EventID
+      MatchID      = b.MatchID
+      PlayerID     = b.PlayerID
+      FighterID    = b.FighterID
+      ParlayID     = b.ParlayID
+      Stake        = b.Stake
+      Result       = b.Result
+      Odds         = 0.0M
+      DisplayOrder = 1
+      FighterName  = ""
+      ImageLink    = ""
+      PlayerName   = "" }
+
+[<Fact>]
+let ``Calculate bet win percentages`` () =
+    let parlay1id = Guid.NewGuid()
+    let parlay2id = Guid.NewGuid()
+    let parlay3id = Guid.NewGuid()
+    let parlay4id = Guid.NewGuid()
+    let parlay5id = Guid.NewGuid()
+    let parlay6id = Guid.NewGuid()
+    let bets1 = 
+        [| { SeasonID = 1; EventID = 1; MatchID = 1; PlayerID = 1; FighterID = 2;  ParlayID = Guid.NewGuid(); Stake = 1M; Result = Nullable(Lose.Code) } 
+           { SeasonID = 1; EventID = 1; MatchID = 4; PlayerID = 1; FighterID = 7;  ParlayID = parlay1id;      Stake = 1M; Result = Nullable(Win.Code)  }
+           { SeasonID = 1; EventID = 1; MatchID = 5; PlayerID = 1; FighterID = 10; ParlayID = parlay1id;      Stake = 1M; Result = Nullable(Lose.Code) } |]
+        |> Array.map mapBetToPrettyBet
+    let bets2 =
+        [| { SeasonID = 1; EventID = 1; MatchID = 9; PlayerID = 2; FighterID = 18; ParlayID = Guid.NewGuid(); Stake = 1M; Result = Nullable(Win.Code) }
+           { SeasonID = 1; EventID = 1; MatchID = 1; PlayerID = 2; FighterID = 1;  ParlayID = Guid.NewGuid(); Stake = 1M; Result = Nullable(Win.Code) }
+           { SeasonID = 1; EventID = 1; MatchID = 7; PlayerID = 2; FighterID = 14; ParlayID = Guid.NewGuid(); Stake = 1M; Result = Nullable(Push.Code) } |]
+        |> Array.map mapBetToPrettyBet
+    let bets3 =
+        [| { SeasonID = 1; EventID = 1; MatchID = 10; PlayerID = 3; FighterID = 1;  ParlayID = parlay2id; Stake = 1M; Result = Nullable(Push.Code) } 
+           { SeasonID = 1; EventID = 1; MatchID = 11; PlayerID = 3; FighterID = 8;  ParlayID = parlay2id; Stake = 1M; Result = Nullable(Win.Code) }  // W
+
+           { SeasonID = 1; EventID = 1; MatchID = 12; PlayerID = 3; FighterID = 9;  ParlayID = parlay3id; Stake = 1M; Result = Nullable()  }
+           { SeasonID = 1; EventID = 1; MatchID = 10; PlayerID = 3; FighterID = 13; ParlayID = parlay3id; Stake = 1M; Result = Nullable(Lose.Code) } // L
+
+           { SeasonID = 1; EventID = 1; MatchID = 10; PlayerID = 3; FighterID = 1;  ParlayID = parlay4id; Stake = 1M; Result = Nullable(Lose.Code) }
+           { SeasonID = 1; EventID = 1; MatchID = 11; PlayerID = 3; FighterID = 8;  ParlayID = parlay4id; Stake = 1M; Result = Nullable(Push.Code) } // L
+
+           { SeasonID = 1; EventID = 1; MatchID = 12; PlayerID = 3; FighterID = 9;  ParlayID = parlay5id; Stake = 1M; Result = Nullable(Lose.Code) }
+           { SeasonID = 1; EventID = 1; MatchID = 10; PlayerID = 3; FighterID = 13; ParlayID = parlay5id; Stake = 1M; Result = Nullable()  }         // L
+
+           { SeasonID = 1; EventID = 1; MatchID = 11; PlayerID = 3; FighterID = 5;  ParlayID = parlay6id; Stake = 1M; Result = Nullable(Win.Code) }
+           { SeasonID = 1; EventID = 1; MatchID = 12; PlayerID = 3; FighterID = 12; ParlayID = parlay6id; Stake = 1M; Result = Nullable(Win.Code) } |] // W
+        |> Array.map mapBetToPrettyBet
+    let result1 = BetService.getPercentOfWinningBets bets1
+    let result2 = BetService.getPercentOfWinningBets bets2
+    let result3 = BetService.getPercentOfWinningBets bets3
+    Assert.Equal(0M, result1)
+    Assert.Equal(1.0M, result2)
+    Assert.Equal(0.40M, result3)

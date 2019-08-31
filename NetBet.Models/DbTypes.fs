@@ -106,17 +106,17 @@ type SeasonPlayer =
 
 type PrettyBet = 
     { 
-        SeasonID: int
-        EventID: int
-        MatchID: int
-        PlayerID: int
-        FighterID: int
-        ParlayID: Guid
-        Stake: decimal
-        Result: Nullable<int>
-        Odds: decimal
+        SeasonID    : int
+        EventID     : int
+        MatchID     : int
+        PlayerID    : int
+        FighterID   : int
+        ParlayID    : Guid
+        Stake       : decimal
+        Result      : Nullable<int>
+        Odds        : decimal
         DisplayOrder: int
-        FighterName: string
-        ImageLink: string
-        PlayerName: string
+        FighterName : string
+        ImageLink   : string
+        PlayerName  : string
     }
