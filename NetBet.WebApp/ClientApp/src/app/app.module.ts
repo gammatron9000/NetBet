@@ -11,27 +11,25 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { SeasonsComponent } from './seasons/seasons.component';
 import { SeasonDetailComponent } from './season-detail/season-detail.component';
 import { SeasonEditComponent } from './season-edit/season-edit.component';
 import { EventEditComponent } from './event-edit/event-edit.component';
 import { EventEasyComponent } from './event-easy/event-easy.component';
+import { EventLiveComponent } from './event-live/event-live.component';
+import { BetComponent } from './bet/bet.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
-    CounterComponent,
-    FetchDataComponent,
     SeasonsComponent,
     SeasonDetailComponent,
     SeasonEditComponent,
     EventEditComponent,
-    EventEasyComponent
+    EventEasyComponent,
+    BetComponent,
+    EventLiveComponent
   ],
     imports: [
         CommonModule,
@@ -40,13 +38,13 @@ import { EventEasyComponent } from './event-easy/event-easy.component';
         FormsModule,
         RouterModule.forRoot([
             { path: '', component: SeasonsComponent, pathMatch: 'full' },
-            { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent },
             { path: 'seasons', component: SeasonsComponent },
             { path: 'season/:id', component: SeasonDetailComponent },
             { path: 'season/edit/:id', component: SeasonEditComponent },
             { path: 'event/edit/:id', component: EventEditComponent },
-            { path: 'event/easyEvent/:seasonID', component: EventEasyComponent }
+            { path: 'event/easyEvent/:seasonID', component: EventEasyComponent },
+            { path: 'event/live/:id', component: EventLiveComponent },
+            { path: 'bet/:eventid', component: BetComponent }
           ]),
         BrowserAnimationsModule,
         NgMultiSelectDropDownModule.forRoot(),

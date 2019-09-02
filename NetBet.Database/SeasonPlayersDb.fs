@@ -7,8 +7,8 @@ open DbTypes
 
 let getPlayersForSeason seasonID = 
     let qp : QueryParamsID = { ID = seasonID }
-    use connection = Db.CreateConnection()
-    connection.Query<SeasonPlayer>("""
+    use db = new DbConnection()
+    db.connection.Query<SeasonPlayer>("""
         SELECT sp.SeasonID
              , sp.PlayerID
              , s.Name as SeasonName
@@ -26,8 +26,8 @@ let getSeasonPlayer seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
         { SeasonID = seasonID
           PlayerID = playerID }
-    use connection = Db.CreateConnection()
-    connection.Query<SeasonPlayer>("""
+    use db = new DbConnection()
+    db.connection.Query<SeasonPlayer>("""
         SELECT sp.SeasonID
              , sp.PlayerID
              , s.Name as SeasonName
@@ -46,8 +46,8 @@ let addPlayerToSeason seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
         { SeasonID = seasonID
           PlayerID = playerID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         IF NOT EXISTS
         ( SELECT 1
           FROM dbo.SeasonPlayers
@@ -65,15 +65,15 @@ let removePlayerFromSeason seasonID playerID =
     let qp : QueryParamsSeasonPlayer = 
         { SeasonID = seasonID
           PlayerID = playerID } 
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.SeasonPlayers
         WHERE SeasonID = @SeasonID
         AND PlayerID = @PlayerID""", qp)
 
 let updateCurrentCash (sp: SeasonPlayer) =
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.SeasonPlayers
         SET CurrentCash = @CurrentCash
         WHERE SeasonID = @SeasonID

@@ -6,32 +6,32 @@ open DbTypes
 
 let getEventByID eventID =
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Query<Event>("""
+    use db = new DbConnection()
+    db.connection.Query<Event>("""
         SELECT ID, SeasonID, Name, StartTime 
         FROM dbo.Events
         WHERE ID = @ID""", qp)
 
 let getEventByName eventName = 
     let qp : QueryParamsName = { Name = eventName }
-    use connection = Db.CreateConnection()
-    connection.Query<Event>("""
+    use db = new DbConnection()
+    db.connection.Query<Event>("""
         SELECT ID, SeasonID, Name, StartTime
         FROM dbo.Events
         WHERE Name = @Name""", qp)
 
 let getEventsForSeason seasonID =
     let qp : QueryParamsID = { ID = seasonID }
-    use connection = Db.CreateConnection()
-    connection.Query<Event>("""
+    use db = new DbConnection()
+    db.connection.Query<Event>("""
         SELECT ID, SeasonID, Name, StartTime 
         FROM dbo.Events
         WHERE SeasonID = @ID""", qp)
 
 // returns the id of the event it will create
 let insertOrUpdateEvent (evt: Event) = 
-    use connection = Db.CreateConnection()
-    connection.QuerySingle<int>("""
+    use db = new DbConnection()
+    db.connection.QuerySingle<int>("""
         IF NOT EXISTS
         ( SELECT 1
           FROM dbo.Events
@@ -53,7 +53,7 @@ let insertOrUpdateEvent (evt: Event) =
 
 let deleteEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Events WHERE ID = @ID""", qp)
         

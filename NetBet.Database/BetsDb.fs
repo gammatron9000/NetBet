@@ -6,16 +6,16 @@ open DbTypes
 
 let getBetsForMatch matchID =
     let qp : QueryParamsID = { ID = matchID }
-    use connection = Db.CreateConnection()
-    connection.Query<BetWithOdds>("""
+    use db = new DbConnection()
+    db.connection.Query<BetWithOdds>("""
         SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result, Odds
         FROM dbo.BetsWithOdds
         WHERE MatchID = @ID""", qp)
 
 let getBetsForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Query<BetWithOdds>("""
+    use db = new DbConnection()
+    db.connection.Query<BetWithOdds>("""
         SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result, Odds
         FROM dbo.BetsWithOdds
         WHERE EventID = @ID""", qp)
@@ -24,8 +24,8 @@ let getBetsForPlayerForSeason playerID seasonID =
     let qp : QueryParamsSeasonPlayer = 
         { SeasonID = seasonID
           PlayerID = playerID }
-    use connection = Db.CreateConnection()
-    connection.Query<BetWithOdds>("""
+    use db = new DbConnection()
+    db.connection.Query<BetWithOdds>("""
         SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result, Odds
         FROM dbo.BetsWithOdds
         WHERE SeasonID = @SeasonID
@@ -37,8 +37,8 @@ let getParlayedBets (b: BetWithOdds) =
           EventID = b.EventID
           PlayerID = b.PlayerID
           ParlayID = b.ParlayID }
-    use connection = Db.CreateConnection()
-    connection.Query<BetWithOdds>("""
+    use db = new DbConnection()
+    db.connection.Query<BetWithOdds>("""
         SELECT SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result, Odds
         FROM dbo.BetsWithOdds
         WHERE SeasonID = @SeasonID
@@ -47,14 +47,14 @@ let getParlayedBets (b: BetWithOdds) =
           AND ParlayID = @ParlayID""", qp)
           
 let insertBet (bet: Bet) =
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         INSERT INTO dbo.Bets (SeasonID, EventID, MatchID, PlayerID, FighterID, ParlayID, Stake, Result)
         VALUES (@SeasonID, @EventID, @MatchID, @PlayerID, @FighterID, @ParlayID, @Stake, NULL)""", bet)
 
 let deleteBet (bet: Bet) = 
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Bets
         WHERE SeasonID = @SeasonID
           AND EventID = @EventID
@@ -65,22 +65,22 @@ let deleteBet (bet: Bet) =
     
 let deleteAllBetsForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Bets
         WHERE EventID = @ID""", qp)
 
 let deleteAllBetsForMatch matchID =
     let qp : QueryParamsID = { ID = matchID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Bets
         WHERE MatchID = @ID""", qp)
 
 let pushBetsForMatch matchID =
     let qp : QueryParamsID = { ID = matchID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.Bets
         SET Result = 2
         WHERE MatchID = @ID""", qp)
@@ -91,8 +91,8 @@ let resolveBetWinners seasonID eventID matchID winnerFighterID =
           EventID = eventID
           MatchID = matchID
           FighterID = winnerFighterID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.Bets
         SET Result = 1
         WHERE SeasonID = @SeasonID
@@ -106,8 +106,8 @@ let resolveBetLosers seasonID eventID matchID loserFighterID =
           EventID = eventID
           MatchID = matchID
           FighterID = loserFighterID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.Bets
         SET Result = 0
         WHERE SeasonID = @SeasonID
@@ -118,13 +118,13 @@ let resolveBetLosers seasonID eventID matchID loserFighterID =
 let getPrettyBets eventID = 
     let qp: QueryParamsEventID =
         { EventID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Query<PrettyBet>("""
+    use db = new DbConnection()
+    db.connection.Query<PrettyBet>("""
         SELECT * FROM getPrettyBetsForEvent(@EventID)""", qp)
 
 let getAllBetsForSeason seasonID = 
     let qp: QueryParamsID = 
         { ID = seasonID }
-    use connection = Db.CreateConnection()
-    connection.Query<PrettyBet>("""
+    use db = new DbConnection()
+    db.connection.Query<PrettyBet>("""
         SELECT * FROM getPrettyBetsForSeason(@ID)""", qp)

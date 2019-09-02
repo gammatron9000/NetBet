@@ -7,24 +7,24 @@ open DtoTypes
 
 let getMatchByID matchID = 
     let qp : QueryParamsID = { ID = matchID }
-    use connection = Db.CreateConnection()
-    connection.Query<Match>("""
+    use db = new DbConnection()
+    db.connection.Query<Match>("""
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE ID = @ID""", qp)
 
 let getMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Query<Match>("""
+    use db = new DbConnection()
+    db.connection.Query<Match>("""
         SELECT ID, EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder
         FROM dbo.Matches
         WHERE EventID = @ID""", qp)
 
 let getPrettyMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Query<PrettyMatch>("""
+    use db = new DbConnection()
+    db.connection.Query<PrettyMatch>("""
         SELECT m.ID, m.EventID, m.Fighter1ID, f1.Name as Fighter1Name, m.Fighter2ID, f2.Name as Fighter2Name, m.Fighter1Odds, m.Fighter2Odds, m.WinnerFighterID, m.LoserFighterID, m.IsDraw, m.DisplayOrder
         FROM dbo.Matches as m
         INNER JOIN dbo.Fighters as f1
@@ -34,22 +34,22 @@ let getPrettyMatchesForEvent eventID =
         WHERE m.EventID = @ID """, qp)
 
 let insertMatch (m: Match) =
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         INSERT INTO dbo.Matches(EventID, Fighter1ID, Fighter2ID, Fighter1Odds, Fighter2Odds, WinnerFighterID, LoserFighterID, IsDraw, DisplayOrder)
         VALUES ( @EventID, @Fighter1ID, @Fighter2ID, @Fighter1Odds, @Fighter2ODds, @WinnerFighterID, @LoserFighterID, @IsDraw, @DisplayOrder )""", m)
         |> ignore
 
 let deleteMatch matchID = 
     let qp : QueryParamsID = { ID = matchID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Matches WHERE ID = @ID""", qp)
         |> ignore
         
 let updateMatch (m: Match) =
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.Matches
         SET Fighter1ID = @Fighter1ID, Fighter2ID = @Fighter2ID, Fighter1Odds = @Fighter1Odds, Fighter2Odds = @Fighter2Odds, WinnerFighterID = @WinnerFighterID, LoserFighterID = @LoserFighterID, IsDraw = @IsDraw, DisplayOrder = @DisplayOrder
         WHERE ID = @ID""", m)
@@ -84,8 +84,8 @@ let resolveMatch matchID winnerID isDraw =
         { MatchID = matchID
           WinnerID = winnerID
           IsDraw = isDraw }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         UPDATE dbo.Matches
         SET WinnerFighterID = @WinnerID
           , LoserFighterID = 
@@ -97,7 +97,7 @@ let resolveMatch matchID winnerID isDraw =
 
 let deleteAllMatchesForEvent eventID = 
     let qp : QueryParamsID = { ID = eventID }
-    use connection = Db.CreateConnection()
-    connection.Execute("""
+    use db = new DbConnection()
+    db.connection.Execute("""
         DELETE FROM dbo.Matches
         WHERE EventID = @ID""", qp)
