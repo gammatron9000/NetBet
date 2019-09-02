@@ -1,3 +1,50 @@
-<p>
-  bet works!
-</p>
+<div class="mainContainer">
+    <a class="btn btn-primary" href="#" [routerLink]="[ '/season', evnt.seasonID ]">Back to Season</a>
+    <div class="row">
+        <div class="col-sm-11">
+            <h1 class="float-left">Bet on {{evnt.name}}</h1>
+            <select [(ngModel)]="selectedPlayer"
+                    name="playerSelector"
+                    class="float-right">
+                <option *ngFor="let p of allPlayers" [(ngValue)]="p">{{p.name}}</option>
+            </select>
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- matches -->
+            <div class="col-sm-8">
+                <table class="table table-bordered table-sm">
+                    <tbody>
+                        <tr *ngFor="let m of matches">
+                            <td width="40%" class="betCellLeft">
+                                <button class="btn btn-sm btn-light" type="button" (click)="betOn(m)">
+                                    {{m.fighter1Name}}
+                                    <strong>{{m.fighter1Odds | number:'1.2-2'}}</strong>
+                                    <fa-icon [icon]="faPlus" style="color: green;" transform="up-3 right-2"></fa-icon>
+                                </button>
+                            </td>
+                            <td width="10%" class="vs"><h4>VS</h4></td>
+                            <td width="40%" class="betCellRight">
+                                <button class="btn btn-sm btn-light" type="button" (click)="betOn(m)">
+                                    {{m.fighter2Name}}
+                                    <strong>{{m.fighter2Odds | number:'1.2-2'}}</strong>
+                                    <fa-icon [icon]="faPlus" style="color: green;" transform="up-3 right-2"></fa-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- bet slip and current bets-->
+            <div class="col-sm-4">
+
+            </div>
+        </div>
+    </div>
+
+
+</div>

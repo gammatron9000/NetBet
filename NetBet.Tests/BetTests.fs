@@ -77,9 +77,15 @@ let ``Calculate bet win percentages`` () =
            { SeasonID = 1; EventID = 1; MatchID = 11; PlayerID = 3; FighterID = 5;  ParlayID = parlay6id; Stake = 1M; Result = Nullable(Win.Code) }
            { SeasonID = 1; EventID = 1; MatchID = 12; PlayerID = 3; FighterID = 12; ParlayID = parlay6id; Stake = 1M; Result = Nullable(Win.Code) } |] // W
         |> Array.map mapBetToPrettyBet
-    let result1 = BetService.getPercentOfWinningBets bets1
-    let result2 = BetService.getPercentOfWinningBets bets2
-    let result3 = BetService.getPercentOfWinningBets bets3
-    Assert.Equal(0M, result1)
-    Assert.Equal(1.0M, result2)
-    Assert.Equal(0.40M, result3)
+    let r1total, r1wins, r1percent = BetService.getPercentOfWinningBets bets1
+    let r2total, r2wins, r2percent = BetService.getPercentOfWinningBets bets2
+    let r3total, r3wins, r3percent = BetService.getPercentOfWinningBets bets3
+    Assert.Equal(2, r1total)
+    Assert.Equal(2, r2total)
+    Assert.Equal(5, r3total)
+    Assert.Equal(0, r1wins)
+    Assert.Equal(2, r2wins)
+    Assert.Equal(2, r3wins)
+    Assert.Equal(0M,    r1percent)
+    Assert.Equal(1.0M,  r2percent)
+    Assert.Equal(0.40M, r3percent)

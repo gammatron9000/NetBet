@@ -86,4 +86,6 @@ type EventWithPrettyMatches =
 
 type SeasonWinPercent = 
     { PlayerName: string
+      TotalBets: int
+      WinningBets: int
       WinPercent: decimal }

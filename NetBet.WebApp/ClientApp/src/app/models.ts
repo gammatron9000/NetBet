@@ -108,9 +108,45 @@ export class EventWithPrettyMatches {
 
 export class SeasonWinPercent {
     public playerName: string;
+    public totalBets: number;
+    public winningBets: number;
     public winPercent: number;
     constructor() {
         this.playerName = '';
+        this.totalBets = 0;
+        this.winningBets = 0;
         this.winPercent = 0.0;
+    }
+}
+
+
+export class PrettyBet {
+    public SeasonID: number;
+    public EventID: number;
+    public MatchID: number;
+    public PlayerID: number;
+    public FighterID: number;
+    public ParlayID: string;
+    public Stake: number;
+    public Result: number;
+    public Odds: number;
+    public DisplayOrder: number;
+    public FighterName: string;
+    public ImageLink: string;
+    public PlayerName: string;
+    constructor() {
+        this.SeasonID = 0;
+        this.EventID = 0;
+        this.MatchID = 0;
+        this.PlayerID = 0;
+        this.FighterID = 0;
+        this.ParlayID = '';
+        this.Stake = 0;
+        this.Result = 0;
+        this.Odds = 0;
+        this.DisplayOrder = 0;
+        this.FighterName = '';
+        this.ImageLink = '';
+        this.PlayerName = '';
     }
 }

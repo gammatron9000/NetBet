@@ -21,12 +21,14 @@ export class EventEditComponent implements OnInit {
     ngOnInit() { }
 
     refreshData(id) {
-        this.http.get<EventWithPrettyMatches>('/api/event/getEventWithMatches/' + id).subscribe(result => {
-            let sortedMatches = result.matches.sort((m1, m2) => m1.displayOrder - m2.displayOrder);
-            result.matches = sortedMatches;
-            this.evnt = result;
-            console.log(this.evnt);
-        }, error => console.error(error));
+        if (id !== 0) {
+            this.http.get<EventWithPrettyMatches>('/api/event/getEventWithMatches/' + id).subscribe(result => {
+                let sortedMatches = result.matches.sort((m1, m2) => m1.displayOrder - m2.displayOrder);
+                result.matches = sortedMatches;
+                this.evnt = result;
+                console.log(this.evnt);
+            }, error => console.error(error));
+        }
     }
 
     deleteMatch(m: PrettyMatch) {

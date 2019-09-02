@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Season, SeasonPlayer, NbEvent, FullSeason, Player, EditSeasonDto } from "../models";
+import { FullSeason, Player, EditSeasonDto } from "../models";
 
 @Component({
     selector: 'app-season-edit',

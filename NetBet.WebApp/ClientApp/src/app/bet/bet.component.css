@@ -1,0 +1,14 @@
+.vs {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.betCellLeft{
+    vertical-align: middle;
+    text-align: right;
+}
+
+.betCellRight {
+    vertical-align: middle;
+    text-align: left;
+}

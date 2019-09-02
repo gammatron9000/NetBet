@@ -160,14 +160,16 @@ let getPercentOfWinningBets (bets: PrettyBet[]) =
             |> Array.forall(fun x -> x.Result = Nullable(Win.Code) || x.Result = Nullable(Push.Code)))
         |> Array.length 
         |> decimal
-    winCount / (allNonPushGroups.Length |> decimal)
-
-
+    ( allNonPushGroups.Length, (winCount |> int), winCount / (allNonPushGroups.Length |> decimal) )
+    
 let getBetStatsForSeason (seasonID: int) = 
     BetsDb.getAllBetsForSeason seasonID 
     |> Seq.toArray 
     |> Array.groupBy(fun x -> x.PlayerName)
     |> Array.map(fun (player, bets) -> 
+        let total, wins, percent = bets |> getPercentOfWinningBets
         { PlayerName = player
-          WinPercent = bets |> getPercentOfWinningBets })
+          TotalBets = total
+          WinningBets = wins
+          WinPercent = percent })
     
