@@ -121,32 +121,32 @@ export class SeasonWinPercent {
 
 
 export class PrettyBet {
-    public SeasonID: number;
-    public EventID: number;
-    public MatchID: number;
-    public PlayerID: number;
-    public FighterID: number;
-    public ParlayID: string;
-    public Stake: number;
-    public Result: number;
-    public Odds: number;
-    public DisplayOrder: number;
-    public FighterName: string;
-    public ImageLink: string;
-    public PlayerName: string;
+    public seasonID: number;
+    public eventID: number;
+    public matchID: number;
+    public playerID: number;
+    public fighterID: number;
+    public parlayID: string;
+    public stake: number;
+    public result: number;
+    public odds: number;
+    public displayOrder: number;
+    public fighterName: string;
+    public imageLink: string;
+    public playerName: string;
     constructor() {
-        this.SeasonID = 0;
-        this.EventID = 0;
-        this.MatchID = 0;
-        this.PlayerID = 0;
-        this.FighterID = 0;
-        this.ParlayID = '';
-        this.Stake = 0;
-        this.Result = 0;
-        this.Odds = 0;
-        this.DisplayOrder = 0;
-        this.FighterName = '';
-        this.ImageLink = '';
-        this.PlayerName = '';
+        this.seasonID = 0;
+        this.eventID = 0;
+        this.matchID = 0;
+        this.playerID = 0;
+        this.fighterID = 0;
+        this.parlayID = '';
+        this.stake = 0;
+        this.result = 0;
+        this.odds = 0;
+        this.displayOrder = 0;
+        this.fighterName = '';
+        this.imageLink = '';
+        this.playerName = '';
     }
 }

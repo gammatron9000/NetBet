@@ -6,7 +6,7 @@
             <select [(ngModel)]="selectedPlayer"
                     name="playerSelector"
                     class="float-right">
-                <option *ngFor="let p of allPlayers" [(ngValue)]="p">{{p.name}}</option>
+                <option *ngFor="let p of allPlayers" [(ngValue)]="p">{{p.playerName}}</option>
             </select>
         </div>
         <div class="col-sm-1"></div>
@@ -41,7 +41,15 @@
 
             <!-- bet slip and current bets-->
             <div class="col-sm-4">
+                <h4>Bet Slip</h4>
+                <table></table>
 
+                <label for="isParlayToggle">Parlay mode</label>
+                <input type="checkbox" name="isParlayToggle" id="isParlayToggle" />
+                <button>Place Bet(s)</button>
+
+                <h4>Current Bets</h4>
+                <table></table>
             </div>
         </div>
     </div>
