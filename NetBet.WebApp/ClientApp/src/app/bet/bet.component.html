@@ -4,6 +4,7 @@
         <div class="col-sm-11">
             <h1 class="float-left">Bet on {{evnt.name}}</h1>
             <select [(ngModel)]="selectedPlayer"
+                    (change)="selectedPlayerChanged()"
                     name="playerSelector"
                     class="float-right">
                 <option *ngFor="let p of allPlayers" [(ngValue)]="p">{{p.playerName}}</option>
@@ -20,7 +21,7 @@
                     <tbody>
                         <tr *ngFor="let m of matches">
                             <td width="40%" class="betCellLeft">
-                                <button class="btn btn-sm btn-light" type="button" (click)="betOn(m)">
+                                <button class="btn btn-sm btn-light" type="button" (click)="addBetToSlipFighter1(m)">
                                     {{m.fighter1Name}}
                                     <strong>{{m.fighter1Odds | number:'1.2-2'}}</strong>
                                     <fa-icon [icon]="faPlus" style="color: green;" transform="up-3 right-2"></fa-icon>
@@ -28,7 +29,7 @@
                             </td>
                             <td width="10%" class="vs"><h4>VS</h4></td>
                             <td width="40%" class="betCellRight">
-                                <button class="btn btn-sm btn-light" type="button" (click)="betOn(m)">
+                                <button class="btn btn-sm btn-light" type="button" (click)="addBetToSlipFighter2(m)">
                                     {{m.fighter2Name}}
                                     <strong>{{m.fighter2Odds | number:'1.2-2'}}</strong>
                                     <fa-icon [icon]="faPlus" style="color: green;" transform="up-3 right-2"></fa-icon>
@@ -41,15 +42,81 @@
 
             <!-- bet slip and current bets-->
             <div class="col-sm-4">
-                <h4>Bet Slip</h4>
-                <table></table>
+                <h5>Current Cash: {{selectedPlayer.currentCash | currency}}</h5>
+                <div [hidden]="betslip.length === 0">
+                    <h4>Bet Slip</h4>
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th width="50%">Name</th>
+                                <th width="15%">Odds</th>
+                                <th width="15%">Stake</th>
+                                <th width="15%">To Win</th>
+                                <th width="5%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let b of betslip">
+                                <td width="50%">{{b.fighterName}}</td>
+                                <td width="15%">{{b.odds | number:'1.2-2'}}</td>
+                                <td width="15%"><input type="number" step="1" [(ngModel)]="b.stake" style="width: 50px;" [disabled]="isParlay" /></td>
+                                <td width="15%">{{calculateToWin(b) | currency}}</td>
+                                <td width="5%">
+                                    <button class="btn btn-sm btn-light" type="button" (click)="deleteBetFromSlip(b)">
+                                        <fa-icon [icon]="faTimes" style="color: red;"></fa-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr [hidden]="!isParlay">
+                                <td width="50%"><strong>Parlay</strong></td>
+                                <td width="15%">{{getParlayOdds() | number:'1.2-2'}}</td>
+                                <td width="15%"><input type="number" step="1" [(ngModel)]="parlayStake" style="width: 50px;" /></td>
+                                <td width="15%">{{calculateParlayToWin() | currency}}</td>
+                                <td width="5%"></td>
+                            </tr>
+                            <tr [hidden]="isParlay">
+                                <td width="50%"><strong>Total</strong></td>
+                                <td width="15%"></td>
+                                <td width="15%">{{calculateTotalStake() | currency}}</td>
+                                <td width="15%">{{calculateTotalToWin() | currency}}</td>
+                                <td width="5%"></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                <label for="isParlayToggle">Parlay mode</label>
-                <input type="checkbox" name="isParlayToggle" id="isParlayToggle" />
-                <button>Place Bet(s)</button>
+                    <div>
+                        <div style="display: block;">
+                            <input type="checkbox" name="isParlayToggle" id="isParlayToggle" [(ngModel)]="isParlay" />
+                            <label style="margin-left: 5px;" for="isParlayToggle">Parlay mode</label>
+                            <div class="float-right">
+                                <button class="btn btn-success" (click)="placeBets()">Place Bets</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
 
-                <h4>Current Bets</h4>
-                <table></table>
+                <div [hidden]="currentBetsForPlayer.length === 0">
+                    <h4>Current Bets</h4>
+                    <table class="table table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th width="50%">Name</th>
+                                <th width="15%">Odds</th>
+                                <th width="15%">Stake</th>
+                                <th width="15%">To Win</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let b of currentBetsForPlayer">
+                                <td width="50%">{{b.fighterName}}</td>
+                                <td width="15%">{{b.odds | number:'1.2-2'}}</td>
+                                <td width="15%">{{b.stake | currency}}</td>
+                                <td width="15%">{{calculateToWin(b) | currency}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
