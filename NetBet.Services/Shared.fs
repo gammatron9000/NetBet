@@ -25,3 +25,13 @@ let mapPrettyMatchToMatch (pm: PrettyMatch) : Match =
       LoserFighterID  = pm.LoserFighterID
       IsDraw          = pm.IsDraw
       DisplayOrder    = pm.DisplayOrder }
+
+let mapPrettyBetToBet (pb: PrettyBet) : Bet = 
+    { SeasonID  = pb.SeasonID 
+      EventID   = pb.EventID  
+      MatchID   = pb.MatchID  
+      PlayerID  = pb.PlayerID 
+      FighterID = pb.FighterID
+      ParlayID  = pb.ParlayID 
+      Stake     = pb.Stake    
+      Result    = pb.Result }

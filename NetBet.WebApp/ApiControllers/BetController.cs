@@ -32,15 +32,9 @@ namespace NetBet.WebApp.ApiControllers
         }
         
         [HttpPost]
-        public void PlaceSingleBet([FromBody] Bet b)
+        public void PlaceBet([FromBody] PlaceBetDto dto)
         {
-            BetService.placeSingleBet(b);
-        }
-
-        [HttpPost]
-        public void PlaceParlayBet([FromBody] Bet[] b)
-        {
-            BetService.placeParlayBet(b);
+            BetService.placeBet(dto);
         }
         
         [HttpDelete()]

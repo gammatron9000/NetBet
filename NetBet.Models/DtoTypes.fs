@@ -89,3 +89,8 @@ type SeasonWinPercent =
       TotalBets: int
       WinningBets: int
       WinPercent: decimal }
+
+type PlaceBetDto = 
+    { Bets: PrettyBet[]
+      IsParlay: bool
+      ParlayStake: decimal }

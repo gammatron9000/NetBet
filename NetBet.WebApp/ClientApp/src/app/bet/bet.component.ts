@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer } from "../models";
+import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto } from "../models";
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { makeStateKey } from '@angular/platform-browser';
 
@@ -13,13 +13,13 @@ import { makeStateKey } from '@angular/platform-browser';
 })
 export class BetComponent implements OnInit {
     private eventID = 0;
+    public evnt: NbEvent = new NbEvent();
     public faPlus = faPlus;
     public faTimes = faTimes;
     public allPlayers: SeasonPlayer[] = [];
     public selectedPlayer = new SeasonPlayer();
     public allBetsForEvent: PrettyBet[] = [];
     public matches: PrettyMatch[] = [];
-    public evnt: NbEvent = new NbEvent();
     public betslip: PrettyBet[] = [];
     public currentBetsForPlayer: PrettyBet[] = [];
     public isParlay = false;
@@ -143,7 +143,26 @@ export class BetComponent implements OnInit {
     placeBets() {
         let totalStake = this.isParlay ? this.parlayStake : this.calculateTotalStake();
         if (totalStake > this.selectedPlayer.currentCash) {
-            this.toastr.error('')
+            this.toastr.error('you dont have enough money', 'no')
+        }
+        else {
+            let dto = new PlaceBetDto();
+            dto.bets = this.betslip;
+            dto.isParlay = this.isParlay;
+            dto.parlayStake = this.parlayStake;
+
+            // NEED TO MAKE A DTO TYPE THAT DOESNT HAVE A GUID IN IT 
+            // AND MAP TO BET ON THE BACKEND UGGGG
+
+            this.http.post('/api/bet/PlaceBet', dto).subscribe(response => {
+                this.toastr.success('bets placed');
+                console.log('bet success', response);
+                // refresh current bets and current player money
+                this.getSeasonPlayers(this.evnt.seasonID); // <-- also gets current bets
+            }, function (error) {
+                this.toastr.error('error');
+                console.error('error placing bets: ', error);
+            });
         }
     }
 }

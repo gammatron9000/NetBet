@@ -150,3 +150,14 @@ export class PrettyBet {
         this.playerName = '';
     }
 }
+
+export class PlaceBetDto {
+    public bets: PrettyBet[];
+    public isParlay: boolean;
+    public parlayStake: number;
+    constructor() {
+        this.bets = [];
+        this.isParlay = false;
+        this.parlayStake = 0.0;
+    }
+}

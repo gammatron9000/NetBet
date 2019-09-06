@@ -152,7 +152,7 @@ let insertSampleDataToDb () =
     let parlay6 =  // potts draws, dada loses
         [| makeBet season1ID season1Event2ID event2Matches.[2].ID tony potts.ID 10M 
            makeBet season1ID season1Event2ID event2Matches.[0].ID tony dada.ID  10M |]
-    [| parlay1; parlay2; parlay3; parlay4; parlay5; parlay6 |] |> Array.iter BetService.placeParlayBet
+    [| parlay1; parlay2; parlay3; parlay4; parlay5; parlay6 |] |> Array.iter (fun x -> BetService.placeParlayBet 10M x)
     
     let dustinS1 = SeasonService.getSeasonPlayer season1ID dustin 
     let jakeS1   = SeasonService.getSeasonPlayer season1ID jake

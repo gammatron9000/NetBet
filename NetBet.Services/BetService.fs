@@ -45,9 +45,8 @@ let placeSingleBet (bet: Bet) =
     BetsDb.insertBet betWithParlayID |> ignore
     SeasonService.removePlayerMoney bet.SeasonID bet.PlayerID bet.Stake
 
-let placeParlayBet (bets: Bet[]) = 
+let placeParlayBet (parlayStake: decimal) (bets: Bet[]) = 
     let parlayID = Guid.NewGuid()
-    let stake    = bets |> Array.map (fun x -> x.Stake)    |> Array.distinct |> Array.exactlyOne
     let seasonID = bets |> Array.map (fun x -> x.SeasonID) |> Array.distinct |> Array.exactlyOne
     let playerID = bets |> Array.map (fun x -> x.PlayerID) |> Array.distinct |> Array.exactlyOne
 
@@ -55,7 +54,13 @@ let placeParlayBet (bets: Bet[]) =
         b |> validateBet
         let betWithParlayID = { b with ParlayID = parlayID }
         BetsDb.insertBet betWithParlayID |> ignore
-    SeasonService.removePlayerMoney seasonID playerID stake
+    SeasonService.removePlayerMoney seasonID playerID parlayStake
+
+let placeBet (dto: PlaceBetDto) = 
+    let bets = dto.Bets |> Array.map Shared.mapPrettyBetToBet
+    match dto.IsParlay with 
+    | true  -> placeParlayBet dto.ParlayStake bets
+    | false -> bets |> Array.iter placeSingleBet
 
 let deleteBet (bet: Bet) =
     if bet.Result = Nullable() then 
