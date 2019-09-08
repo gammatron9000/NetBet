@@ -41,7 +41,7 @@ import { BetComponent } from './bet/bet.component';
             { path: 'seasons', component: SeasonsComponent },
             { path: 'season/:id', component: SeasonDetailComponent },
             { path: 'season/edit/:id', component: SeasonEditComponent },
-            { path: 'event/edit/:id', component: EventEditComponent },
+            { path: 'event/edit/:seasonid/:eventid', component: EventEditComponent },
             { path: 'event/easyEvent/:seasonID', component: EventEasyComponent },
             { path: 'event/live/:id', component: EventLiveComponent },
             { path: 'bet/:eventid', component: BetComponent }

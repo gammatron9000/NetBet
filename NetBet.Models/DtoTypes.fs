@@ -90,7 +90,21 @@ type SeasonWinPercent =
       WinningBets: int
       WinPercent: decimal }
 
+type PrettyBetWithoutParlayID = 
+    { SeasonID    : int
+      EventID     : int
+      MatchID     : int
+      PlayerID    : int
+      FighterID   : int
+      Stake       : decimal
+      Result      : Nullable<int>
+      Odds        : decimal
+      DisplayOrder: int
+      FighterName : string
+      ImageLink   : string
+      PlayerName  : string }
+
 type PlaceBetDto = 
-    { Bets: PrettyBet[]
+    { Bets: PrettyBetWithoutParlayID[]
       IsParlay: bool
       ParlayStake: decimal }

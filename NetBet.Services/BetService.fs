@@ -52,12 +52,12 @@ let placeParlayBet (parlayStake: decimal) (bets: Bet[]) =
 
     for b in bets do
         b |> validateBet
-        let betWithParlayID = { b with ParlayID = parlayID }
-        BetsDb.insertBet betWithParlayID |> ignore
+        let betWithParlayIDandStake = { b with ParlayID = parlayID; Stake = parlayStake }
+        BetsDb.insertBet betWithParlayIDandStake |> ignore
     SeasonService.removePlayerMoney seasonID playerID parlayStake
 
 let placeBet (dto: PlaceBetDto) = 
-    let bets = dto.Bets |> Array.map Shared.mapPrettyBetToBet
+    let bets = dto.Bets |> Array.map Shared.mapPrettyBetWithoutParlayIDToBet
     match dto.IsParlay with 
     | true  -> placeParlayBet dto.ParlayStake bets
     | false -> bets |> Array.iter placeSingleBet

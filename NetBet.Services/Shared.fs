@@ -35,3 +35,13 @@ let mapPrettyBetToBet (pb: PrettyBet) : Bet =
       ParlayID  = pb.ParlayID 
       Stake     = pb.Stake    
       Result    = pb.Result }
+
+let mapPrettyBetWithoutParlayIDToBet (pb: PrettyBetWithoutParlayID) : Bet = 
+    { SeasonID  = pb.SeasonID 
+      EventID   = pb.EventID  
+      MatchID   = pb.MatchID  
+      PlayerID  = pb.PlayerID 
+      FighterID = pb.FighterID
+      ParlayID  = Guid.Empty
+      Stake     = pb.Stake    
+      Result    = pb.Result }

@@ -11,10 +11,12 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class EventEditComponent implements OnInit {
     public evnt: EventWithPrettyMatches = new EventWithPrettyMatches();
+    public seasonID = 0;
     private eventID = 0;
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
-        this.eventID = Number(this.route.snapshot.paramMap.get('id'));
+        this.eventID = Number(this.route.snapshot.paramMap.get('eventid'));
+        this.seasonID = Number(this.route.snapshot.paramMap.get('seasonid'));
         this.refreshData(this.eventID);
     }
 
@@ -50,6 +52,7 @@ export class EventEditComponent implements OnInit {
     }
 
     onSubmit() {
+        this.evnt.event.seasonID = this.seasonID;
         this.http.post('/api/event/CreateOrUpdate', this.evnt).subscribe(response => {
             this.toastr.success('Event saved');
             console.log('save success', response);

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto } from "../models";
+import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto, BetDisplay } from "../models";
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { makeStateKey } from '@angular/platform-browser';
 
@@ -21,9 +21,10 @@ export class BetComponent implements OnInit {
     public allBetsForEvent: PrettyBet[] = [];
     public matches: PrettyMatch[] = [];
     public betslip: PrettyBet[] = [];
-    public currentBetsForPlayer: PrettyBet[] = [];
+    public currentBetsForPlayer: BetDisplay[] = [];
     public isParlay = false;
     public parlayStake = 0.0;
+    
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
         this.eventID = Number(this.route.snapshot.paramMap.get('eventid'));
@@ -37,9 +38,11 @@ export class BetComponent implements OnInit {
             this.allBetsForEvent = result;
             console.log('bets', result);
             let currentPlayer = this.selectedPlayer; // makes this visible inside the following filter function
-            this.currentBetsForPlayer = this.allBetsForEvent.filter(function (bet) {
+            let betsForPlayer = this.allBetsForEvent.filter(function (bet) {
                 return bet.playerID === currentPlayer.playerID;
             });
+            this.currentBetsForPlayer = this.populateDisplayBets(betsForPlayer);
+
         }, error => console.error('error getting bets: ', error));
     }
 
@@ -65,18 +68,26 @@ export class BetComponent implements OnInit {
         }, error => console.error('error getting event and matches: ', error));
     }
 
+    isFightResolved(m: PrettyMatch) {
+        return m.isDraw === true || (m.winnerFighterID !== null && m.loserFighterID !== null);
+    }
+    
     selectedPlayerChanged() {
         this.isParlay = false;
         this.parlayStake = 0.0;
         this.betslip = [];
         this.currentBetsForPlayer = [];
         let newPlayer = this.selectedPlayer;
-        this.currentBetsForPlayer = this.allBetsForEvent.filter(function (bet) {
+        let betsForPlayer = this.allBetsForEvent.filter(function (bet) {
             return bet.playerID === newPlayer.playerID;
         });
+        this.currentBetsForPlayer = this.populateDisplayBets(betsForPlayer);
     }
 
     addBetToSlip(fighterID, fighterName, odds, m: PrettyMatch) {
+        let existingBetInSlip = this.betslip.find(function (bet) { return bet.fighterID === fighterID });
+        if (existingBetInSlip) { return; }
+
         let b = new PrettyBet();
         b.displayOrder = m.displayOrder;
         b.eventID = this.eventID;
@@ -106,34 +117,33 @@ export class BetComponent implements OnInit {
     calculateToWin(b: PrettyBet) {
         return (b.odds - 1.0) * b.stake;
     }
-
-    getParlayOdds() {
-        if (this.betslip.length > 0) {
-
-            let allOdds = this.betslip.map(x => x.odds);
+    
+    getParlayOdds(bets: PrettyBet[]) {
+        if (bets.length > 0) {
+            let allOdds = bets.map(x => x.odds);
             const reducer = (accumulator, currentValue) => accumulator * currentValue;
             return allOdds.reduce(reducer);
         }
         else return 0.0;
     }
 
-    calculateParlayToWin() {
-        let parlayOdds = this.getParlayOdds();
+    calculateParlayToWin(bets: PrettyBet[]) {
+        let parlayOdds = this.getParlayOdds(bets);
         return (parlayOdds - 1.00) * this.parlayStake;
     }
 
-    calculateTotalStake() {
-        if (this.betslip.length > 0) {
-            let allStakes = this.betslip.map(x => x.stake);
+    calculateTotalStake(bets: PrettyBet[]) {
+        if (bets.length > 0) {
+            let allStakes = bets.map(x => x.stake);
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
             return allStakes.reduce(reducer);
         }
         else return 0.0;
     }
 
-    calculateTotalToWin() {
-        if (this.betslip.length > 0) {
-            let allToWins = this.betslip.map(x => this.calculateToWin(x));
+    calculateTotalToWin(bets: PrettyBet[]) {
+        if (bets.length > 0) {
+            let allToWins = bets.map(x => this.calculateToWin(x));
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
             return allToWins.reduce(reducer);
         }
@@ -141,7 +151,7 @@ export class BetComponent implements OnInit {
     }
 
     placeBets() {
-        let totalStake = this.isParlay ? this.parlayStake : this.calculateTotalStake();
+        let totalStake = this.isParlay ? this.parlayStake : this.calculateTotalStake(this.betslip);
         if (totalStake > this.selectedPlayer.currentCash) {
             this.toastr.error('you dont have enough money', 'no')
         }
@@ -150,14 +160,13 @@ export class BetComponent implements OnInit {
             dto.bets = this.betslip;
             dto.isParlay = this.isParlay;
             dto.parlayStake = this.parlayStake;
-
-            // NEED TO MAKE A DTO TYPE THAT DOESNT HAVE A GUID IN IT 
-            // AND MAP TO BET ON THE BACKEND UGGGG
-
             this.http.post('/api/bet/PlaceBet', dto).subscribe(response => {
                 this.toastr.success('bets placed');
                 console.log('bet success', response);
                 // refresh current bets and current player money
+                this.isParlay = false;
+                this.parlayStake = 0.0;
+                this.betslip = [];
                 this.getSeasonPlayers(this.evnt.seasonID); // <-- also gets current bets
             }, function (error) {
                 this.toastr.error('error');
@@ -165,4 +174,55 @@ export class BetComponent implements OnInit {
             });
         }
     }
+
+    groupBy(list, keyGetter) {
+        const map = new Map();
+        list.forEach((item) => {
+            const key = keyGetter(item);
+            const collection = map.get(key);
+            if (!collection) {
+                map.set(key, [item]);
+            } else {
+                collection.push(item);
+            }
+        });
+        return map;
+    }
+    
+    populateDisplayBets(bets: PrettyBet[]) {
+        const grouped = this.groupBy(bets, b => b.parlayID);
+        let result: BetDisplay[] = [];
+        let self = this; // alias 'this' to pass into mapper function
+        grouped.forEach(function (value, key) {
+            let display: BetDisplay = self.mapBetsToDisplayBets(value, key, self);
+            result.push(display);
+        }); 
+        return result;
+    }
+
+    calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
+        if (bets.length > 0) {
+            let allOdds = bets.map(x => x.odds);
+            const reducer = (accumulator, currentValue) => accumulator * currentValue;
+            let parlayOdds = allOdds.reduce(reducer);
+            let result = (parlayOdds - 1.00) * stake;
+            return result;
+        }
+        else return 0.0;
+    }
+
+    mapBetsToDisplayBets(bets: PrettyBet[], key: string, context: any) {
+        let display = new BetDisplay();
+        let allStakes = bets.map(b => b.stake);
+        let firstStake = allStakes[0];
+        let stakesMatch = allStakes.every(x => x === firstStake);
+        if (!stakesMatch) { console.log('ERROR: not all stakes match in bet with parlayID ' + key); }
+        display.parlayID = key;
+        display.fighterNames = bets.map(b => b.fighterName);
+        display.totalStake = firstStake;
+        display.totalOdds = context.getParlayOdds(bets);
+        display.totalToWin = context.calculateExistingParlayToWin(bets, firstStake);
+        return display;
+    }
+
 }
