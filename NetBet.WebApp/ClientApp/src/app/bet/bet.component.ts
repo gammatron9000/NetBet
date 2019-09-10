@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto, BetDisplay } from "../models";
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { makeStateKey } from '@angular/platform-browser';
+import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto, BetDisplay, BetDisplayNameAndResult } from "../models";
+import { faPlus, faTimes, faCheck, faHandPaper } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-bet',
@@ -16,6 +15,8 @@ export class BetComponent implements OnInit {
     public evnt: NbEvent = new NbEvent();
     public faPlus = faPlus;
     public faTimes = faTimes;
+    public faCheck = faCheck;
+    public faHand = faHandPaper;
     public allPlayers: SeasonPlayer[] = [];
     public selectedPlayer = new SeasonPlayer();
     public allBetsForEvent: PrettyBet[] = [];
@@ -150,6 +151,17 @@ export class BetComponent implements OnInit {
         else return 0.0;
     }
 
+    calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
+        if (bets.length > 0) {
+            let allOdds = bets.map(x => x.odds);
+            const reducer = (accumulator, currentValue) => accumulator * currentValue;
+            let parlayOdds = allOdds.reduce(reducer);
+            let result = (parlayOdds - 1.00) * stake;
+            return result;
+        }
+        else return 0.0;
+    }
+
     placeBets() {
         let totalStake = this.isParlay ? this.parlayStake : this.calculateTotalStake(this.betslip);
         if (totalStake > this.selectedPlayer.currentCash) {
@@ -197,20 +209,10 @@ export class BetComponent implements OnInit {
             let display: BetDisplay = self.mapBetsToDisplayBets(value, key, self);
             result.push(display);
         }); 
+        console.log('my bets', result);
         return result;
     }
-
-    calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
-        if (bets.length > 0) {
-            let allOdds = bets.map(x => x.odds);
-            const reducer = (accumulator, currentValue) => accumulator * currentValue;
-            let parlayOdds = allOdds.reduce(reducer);
-            let result = (parlayOdds - 1.00) * stake;
-            return result;
-        }
-        else return 0.0;
-    }
-
+    
     mapBetsToDisplayBets(bets: PrettyBet[], key: string, context: any) {
         let display = new BetDisplay();
         let allStakes = bets.map(b => b.stake);
@@ -218,11 +220,21 @@ export class BetComponent implements OnInit {
         let stakesMatch = allStakes.every(x => x === firstStake);
         if (!stakesMatch) { console.log('ERROR: not all stakes match in bet with parlayID ' + key); }
         display.parlayID = key;
-        display.fighterNames = bets.map(b => b.fighterName);
+        display.fightersAndResults =
+            bets.map(b =>
+                new BetDisplayNameAndResult(b.fighterName, this.mapResultCodeToString(b.result)));
         display.totalStake = firstStake;
         display.totalOdds = context.getParlayOdds(bets);
         display.totalToWin = context.calculateExistingParlayToWin(bets, firstStake);
         return display;
     }
 
+    mapResultCodeToString(code: number) {
+        switch (code) {
+            case 0:  return 'LOSE'; 
+            case 1:  return 'WIN';
+            case 2:  return 'PUSH';
+            default: return 'TBD';
+        }
+    }
 }

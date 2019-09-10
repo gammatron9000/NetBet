@@ -98,7 +98,7 @@
 
                 <div [hidden]="currentBetsForPlayer.length === 0">
                     <h4>Current Bets</h4>
-                    <table class="table table-bordered table-sm table-striped">
+                    <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
                                 <th width="40%">Name</th>
@@ -110,7 +110,12 @@
                         <tbody>
                             <tr *ngFor="let b of currentBetsForPlayer">
                                 <td width="40%">
-                                    <div *ngFor="let f of b.fighterNames"><small>{{f}}</small></div>
+                                    <div *ngFor="let f of b.fightersAndResults">
+                                        <small>{{f.fighterName}}</small>
+                                        <fa-icon *ngIf="f.result === 'WIN'"  [icon]="faCheck" style="color: green;" transform="right-2 up-2"></fa-icon>
+                                        <fa-icon *ngIf="f.result === 'LOSE'" [icon]="faTimes" style="color: red;" transform="right-2"></fa-icon>
+                                        <fa-icon *ngIf="f.result === 'PUSH'" [icon]="faHand"  style="color: gold;" transform="right-2"></fa-icon>
+                                    </div>
                                 </td>
                                 <td width="20%" class="stakeOddsCell">{{b.totalStake | currency}}</td>
                                 <td width="15%" class="stakeOddsCell">{{b.totalOdds | number:'1.2-2'}}</td>

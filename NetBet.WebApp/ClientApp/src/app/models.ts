@@ -162,15 +162,24 @@ export class PlaceBetDto {
     }
 }
 
+export class BetDisplayNameAndResult {
+    public fighterName: string;
+    public result: string;
+    constructor(name: string, result: string) {
+        this.fighterName = name;
+        this.result = result;
+    }
+}
+
 export class BetDisplay {
     public parlayID: string;
-    public fighterNames: string[];
+    public fightersAndResults: BetDisplayNameAndResult[];
     public totalStake: number;
     public totalOdds: number;
     public totalToWin: number;
     constructor() {
         this.parlayID = '';
-        this.fighterNames = [];
+        this.fightersAndResults = [];
         this.totalStake = 0;
         this.totalOdds = 0;
         this.totalToWin = 0;
