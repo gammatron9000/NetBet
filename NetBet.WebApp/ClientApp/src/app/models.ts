@@ -1,4 +1,6 @@
-﻿export class Season {
+﻿import { PACKAGE_ROOT_URL } from "@angular/core";
+
+export class Season {
     public startingCash: number;
     public endTime: Date;
     public startTime: Date;
@@ -183,5 +185,14 @@ export class BetDisplay {
         this.totalStake = 0;
         this.totalOdds = 0;
         this.totalToWin = 0;
+    }
+}
+
+export class PlayerAndBets {
+    public playerName: string;
+    public bets: PrettyBet[];
+    constructor() {
+        this.playerName = '';
+        this.bets = [];
     }
 }

@@ -1,3 +1,20 @@
-<p>
-  event-live works!
-</p>
+<div class="mainContainer">
+    <a class="btn btn-primary" href="#" [routerLink]="[ '/season', evnt.seasonID ]">Back to Season</a>
+    <h1>{{evnt.name}}</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- player bets -->
+            <div class="col-sm-8">
+                <div *ngFor="let b of allBetsForEvent | groupBy:'playerName'">
+                    <h4>{{b.key}}</h4>
+                    <bet-display [bets]="b.value"></bet-display>
+                </div>
+            </div>
+
+            <!-- matches -->
+            <div class="col-sm-4">
+                
+            </div>
+        </div>
+    </div>
+</div>

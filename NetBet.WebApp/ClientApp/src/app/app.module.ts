@@ -18,6 +18,8 @@ import { EventEditComponent } from './event-edit/event-edit.component';
 import { EventEasyComponent } from './event-easy/event-easy.component';
 import { EventLiveComponent } from './event-live/event-live.component';
 import { BetComponent } from './bet/bet.component';
+import { BetDisplayComponent } from './bet-display/bet-display.component';
+import { GroupByPipe } from './group-by.pipe';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { BetComponent } from './bet/bet.component';
     EventEditComponent,
     EventEasyComponent,
     BetComponent,
-    EventLiveComponent
+    EventLiveComponent,
+    BetDisplayComponent,
+    GroupByPipe
   ],
     imports: [
         CommonModule,
@@ -43,7 +47,7 @@ import { BetComponent } from './bet/bet.component';
             { path: 'season/edit/:id', component: SeasonEditComponent },
             { path: 'event/edit/:seasonid/:eventid', component: EventEditComponent },
             { path: 'event/easyEvent/:seasonID', component: EventEasyComponent },
-            { path: 'event/live/:id', component: EventLiveComponent },
+            { path: 'event/live/:seasonid/:eventid', component: EventLiveComponent },
             { path: 'bet/:eventid', component: BetComponent }
           ]),
         BrowserAnimationsModule,

@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto, BetDisplay, BetDisplayNameAndResult } from "../models";
-import { faPlus, faTimes, faCheck, faHandPaper } from '@fortawesome/free-solid-svg-icons'
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-bet',
@@ -14,15 +14,12 @@ export class BetComponent implements OnInit {
     private eventID = 0;
     public evnt: NbEvent = new NbEvent();
     public faPlus = faPlus;
-    public faTimes = faTimes;
-    public faCheck = faCheck;
-    public faHand = faHandPaper;
     public allPlayers: SeasonPlayer[] = [];
     public selectedPlayer = new SeasonPlayer();
     public allBetsForEvent: PrettyBet[] = [];
     public matches: PrettyMatch[] = [];
     public betslip: PrettyBet[] = [];
-    public currentBetsForPlayer: BetDisplay[] = [];
+    public currentBetsForPlayer: PrettyBet[] = [];
     public isParlay = false;
     public parlayStake = 0.0;
     
@@ -42,7 +39,7 @@ export class BetComponent implements OnInit {
             let betsForPlayer = this.allBetsForEvent.filter(function (bet) {
                 return bet.playerID === currentPlayer.playerID;
             });
-            this.currentBetsForPlayer = this.populateDisplayBets(betsForPlayer);
+            this.currentBetsForPlayer = betsForPlayer;
 
         }, error => console.error('error getting bets: ', error));
     }
@@ -82,7 +79,7 @@ export class BetComponent implements OnInit {
         let betsForPlayer = this.allBetsForEvent.filter(function (bet) {
             return bet.playerID === newPlayer.playerID;
         });
-        this.currentBetsForPlayer = this.populateDisplayBets(betsForPlayer);
+        this.currentBetsForPlayer = betsForPlayer;
     }
 
     addBetToSlip(fighterID, fighterName, odds, m: PrettyMatch) {
@@ -150,18 +147,7 @@ export class BetComponent implements OnInit {
         }
         else return 0.0;
     }
-
-    calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
-        if (bets.length > 0) {
-            let allOdds = bets.map(x => x.odds);
-            const reducer = (accumulator, currentValue) => accumulator * currentValue;
-            let parlayOdds = allOdds.reduce(reducer);
-            let result = (parlayOdds - 1.00) * stake;
-            return result;
-        }
-        else return 0.0;
-    }
-
+    
     placeBets() {
         let totalStake = this.isParlay ? this.parlayStake : this.calculateTotalStake(this.betslip);
         if (totalStake > this.selectedPlayer.currentCash) {
@@ -187,54 +173,4 @@ export class BetComponent implements OnInit {
         }
     }
 
-    groupBy(list, keyGetter) {
-        const map = new Map();
-        list.forEach((item) => {
-            const key = keyGetter(item);
-            const collection = map.get(key);
-            if (!collection) {
-                map.set(key, [item]);
-            } else {
-                collection.push(item);
-            }
-        });
-        return map;
-    }
-    
-    populateDisplayBets(bets: PrettyBet[]) {
-        const grouped = this.groupBy(bets, b => b.parlayID);
-        let result: BetDisplay[] = [];
-        let self = this; // alias 'this' to pass into mapper function
-        grouped.forEach(function (value, key) {
-            let display: BetDisplay = self.mapBetsToDisplayBets(value, key, self);
-            result.push(display);
-        }); 
-        console.log('my bets', result);
-        return result;
-    }
-    
-    mapBetsToDisplayBets(bets: PrettyBet[], key: string, context: any) {
-        let display = new BetDisplay();
-        let allStakes = bets.map(b => b.stake);
-        let firstStake = allStakes[0];
-        let stakesMatch = allStakes.every(x => x === firstStake);
-        if (!stakesMatch) { console.log('ERROR: not all stakes match in bet with parlayID ' + key); }
-        display.parlayID = key;
-        display.fightersAndResults =
-            bets.map(b =>
-                new BetDisplayNameAndResult(b.fighterName, this.mapResultCodeToString(b.result)));
-        display.totalStake = firstStake;
-        display.totalOdds = context.getParlayOdds(bets);
-        display.totalToWin = context.calculateExistingParlayToWin(bets, firstStake);
-        return display;
-    }
-
-    mapResultCodeToString(code: number) {
-        switch (code) {
-            case 0:  return 'LOSE'; 
-            case 1:  return 'WIN';
-            case 2:  return 'PUSH';
-            default: return 'TBD';
-        }
-    }
 }

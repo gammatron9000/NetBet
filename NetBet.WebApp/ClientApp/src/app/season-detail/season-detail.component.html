@@ -18,7 +18,7 @@
                     <tbody>
                         <tr *ngFor="let e of seasonDetail.events">
                             <td width="80%"><h5>{{e.name}}</h5></td>
-                            <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/event', e.id ]">Live</a></td>
+                            <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/event/live', e.seasonID, e.id ]">Live</a></td>
                             <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/bet', e.id ]">Bet</a></td>
                             <td width="7%"><a class="btn btn-primary" href="#" [routerLink]="[ '/event/edit', e.id ]">Edit</a></td>
                             <td width="7%"><button class="btn btn-danger" (click)="deleteEvent(e)">X</button></td>

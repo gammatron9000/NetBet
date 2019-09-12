@@ -1,0 +1,105 @@
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { PrettyBet, BetDisplay, BetDisplayNameAndResult } from '../models';
+import { faPlus, faTimes, faCheck, faHandPaper } from '@fortawesome/free-solid-svg-icons';
+
+@Component({
+  selector: 'bet-display',
+  templateUrl: './bet-display.component.html',
+  styleUrls: ['./bet-display.component.css']
+})
+export class BetDisplayComponent implements OnChanges {
+
+    @Input() bets: PrettyBet[] = [];
+    public displayBets: BetDisplay[] = [];
+    public faTimes = faTimes;
+    public faCheck = faCheck;
+    public faHand = faHandPaper;
+    
+    ngOnChanges(changes) {
+        this.populateDisplayBets(this.bets);
+    }
+
+    groupBy(list, keyGetter) {
+        const map = new Map();
+        list.forEach((item) => {
+            const key = keyGetter(item);
+            const collection = map.get(key);
+            if (!collection) {
+                map.set(key, [item]);
+            } else {
+                collection.push(item);
+            }
+        });
+        return map;
+    }
+
+    populateDisplayBets(bets: PrettyBet[]) {
+        const grouped = this.groupBy(bets, b => b.parlayID);
+        let result: BetDisplay[] = [];
+        let self = this; // alias 'this' to pass into mapper function
+        grouped.forEach(function (value, key) {
+            let display: BetDisplay = self.mapBetsToDisplayBets(value, key, self);
+            result.push(display);
+        });
+        console.log('my bets', result);
+        this.displayBets = result;
+    }
+
+    mapBetsToDisplayBets(bets: PrettyBet[], key: string, context: any) {
+        let display = new BetDisplay();
+        let allStakes = bets.map(b => b.stake);
+        let firstStake = allStakes[0];
+        let stakesMatch = allStakes.every(x => x === firstStake);
+        if (!stakesMatch) { console.log('ERROR: not all stakes match in bet with parlayID ' + key); }
+        display.parlayID = key;
+        display.fightersAndResults =
+            bets.map(b =>
+                new BetDisplayNameAndResult(b.fighterName, this.mapResultCodeToString(b.result)));
+        display.totalStake = firstStake;
+        display.totalOdds = context.getParlayOdds(bets);
+        display.totalToWin = context.calculateExistingParlayToWin(bets, firstStake);
+        return display;
+    }
+
+    getParlayOdds(bets: PrettyBet[]) {
+        if (bets.length > 0) {
+            let allOdds = bets.map(x => x.odds);
+            const reducer = (accumulator, currentValue) => accumulator * currentValue;
+            return allOdds.reduce(reducer);
+        }
+        else return 0.0;
+    }
+
+    calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
+        if (bets.length > 0) {
+            let allOdds = bets.map(x => x.odds);
+            const reducer = (accumulator, currentValue) => accumulator * currentValue;
+            let parlayOdds = allOdds.reduce(reducer);
+            let result = (parlayOdds - 1.00) * stake;
+            return result;
+        }
+        else return 0.0;
+    }
+    
+    mapResultCodeToString(code: number) {
+        switch (code) {
+            case 0: return 'LOSE';
+            case 1: return 'WIN';
+            case 2: return 'PUSH';
+            default: return 'TBD';
+        }
+    }
+
+    getFullBetBgColor(b: BetDisplay) {
+        let results = b.fightersAndResults.map(x => x.result);
+        let anyLose = results.find(x => x === 'LOSE');
+        if (anyLose) { return 'lightpink'; } //if any are losses, the whole bet is a loss
+        let winPushCount = results.filter(x => x === 'WIN' || x === 'PUSH');
+        if (winPushCount.length === results.length) { // all bets have been resolved
+            let anyWin = results.find(x => x === 'WIN');
+            if (anyWin) { return 'lightgreen'; }
+            else return 'palegoldenrod'; // all pushes
+        }
+        return '';
+    }
+}
