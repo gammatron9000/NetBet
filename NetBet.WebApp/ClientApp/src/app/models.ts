@@ -187,12 +187,3 @@ export class BetDisplay {
         this.totalToWin = 0;
     }
 }
-
-export class PlayerAndBets {
-    public playerName: string;
-    public bets: PrettyBet[];
-    constructor() {
-        this.playerName = '';
-        this.bets = [];
-    }
-}
