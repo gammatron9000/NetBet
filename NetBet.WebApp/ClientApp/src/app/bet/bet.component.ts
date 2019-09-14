@@ -3,7 +3,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { Player, PrettyBet, PrettyMatch, EventWithPrettyMatches, NbEvent, SeasonPlayer, PlaceBetDto, BetDisplay, BetDisplayNameAndResult } from "../models";
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-bet',
@@ -14,6 +14,7 @@ export class BetComponent implements OnInit {
     private eventID = 0;
     public evnt: NbEvent = new NbEvent();
     public faPlus = faPlus;
+    public faTimes = faTimes;
     public allPlayers: SeasonPlayer[] = [];
     public selectedPlayer = new SeasonPlayer();
     public allBetsForEvent: PrettyBet[] = [];
@@ -47,8 +48,11 @@ export class BetComponent implements OnInit {
     getSeasonPlayers(seasonID) {
         this.http.get<SeasonPlayer[]>('/api/Player/GetPlayersForSeason/' + seasonID).subscribe(result => {
             this.allPlayers = result;
-            if (this.allPlayers.length > 0) {
+            if (this.allPlayers.length > 0 && this.selectedPlayer.playerID == 0) {
                 this.selectedPlayer = this.allPlayers[0];
+            }
+            if (this.selectedPlayer.playerID !== 0) {
+                this.selectedPlayer = this.allPlayers.find(x => x.playerID === this.selectedPlayer.playerID);
             }
             console.log('players', result);
             this.getBets();

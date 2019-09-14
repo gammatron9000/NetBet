@@ -90,16 +90,38 @@ export class BetDisplayComponent implements OnChanges {
         }
     }
 
-    getFullBetBgColor(b: BetDisplay) {
+    determineFullBetResult(b: BetDisplay) {
         let results = b.fightersAndResults.map(x => x.result);
         let anyLose = results.find(x => x === 'LOSE');
-        if (anyLose) { return 'lightpink'; } //if any are losses, the whole bet is a loss
+        if (anyLose) { return 'LOSE'; } //if any are losses, the whole bet is a loss
         let winPushCount = results.filter(x => x === 'WIN' || x === 'PUSH');
         if (winPushCount.length === results.length) { // all bets have been resolved
             let anyWin = results.find(x => x === 'WIN');
-            if (anyWin) { return 'lightgreen'; }
-            else return 'palegoldenrod'; // all pushes
+            if (anyWin) { return 'WIN'; }
+            else return 'PUSH'; // all pushes
         }
         return '';
+    }
+
+    getFullBetBgColor(b: BetDisplay) {
+        let fullResult = this.determineFullBetResult(b);
+        if (fullResult === 'LOSE') { return 'lightpink'; }
+        if (fullResult === 'WIN') { return 'lightgreen'; }
+        if (fullResult === 'PUSH') { return 'palegoldenrod'; }
+        return '';
+    }
+
+    calculateResult(b: BetDisplay) {
+        let fullResult = this.determineFullBetResult(b);
+        if (fullResult === 'LOSE') { return 0 - b.totalStake; }
+        if (fullResult === 'WIN') { return b.totalStake + b.totalToWin; }
+        if (fullResult === 'PUSH') { return b.totalStake; }
+        else return 0;
+    }
+
+    calculateAllResults() {
+        let total = 0;
+        this.displayBets.forEach((item) => total += this.calculateResult(item));
+        return total;
     }
 }

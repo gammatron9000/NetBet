@@ -2,9 +2,10 @@
     <thead>
         <tr>
             <th width="40%">Name</th>
-            <th width="20%">Stake</th>
+            <th width="15%">Stake</th>
             <th width="15%">Odds</th>
-            <th width="20%">To Win</th>
+            <th width="15%">To Win</th>
+            <th width="10%">Result</th>
         </tr>
     </thead>
     <tbody>
@@ -17,9 +18,17 @@
                     <fa-icon *ngIf="f.result === 'PUSH'" [icon]="faHand" style="color: gold;" transform="right-2"></fa-icon>
                 </div>
             </td>
-            <td width="20%" class="stakeOddsCell">{{b.totalStake | currency}}</td>
+            <td width="15%" class="stakeOddsCell">{{b.totalStake | currency}}</td>
             <td width="15%" class="stakeOddsCell">{{b.totalOdds | number:'1.2-2'}}</td>
-            <td width="20%" class="stakeOddsCell">{{b.totalToWin | currency}}</td>
+            <td width="15%" class="stakeOddsCell">{{b.totalToWin | currency}}</td>
+            <td width="15%" class="stakeOddsCell" [style.color]="calculateResult(b) < 0 ? 'red' : 'black'">{{calculateResult(b) | currency}}</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><strong>Total</strong></td>
+            <td class="stakeOddsCell" [style.color]="calculateAllResults() < 0 ? 'red' : 'black'">{{calculateAllResults() | currency}}</td>
         </tr>
     </tbody>
 </table>

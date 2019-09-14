@@ -187,3 +187,18 @@ export class BetDisplay {
         this.totalToWin = 0;
     }
 }
+
+export class ResolveMatchDto {
+    public seasonID: number;
+    public eventID: number;
+    public matchID: number;
+    public winnerID: number;
+    public isDraw: boolean;
+    constructor() {
+        this.seasonID = 0;
+        this.eventID = 0; 
+        this.matchID = 0;
+        this.winnerID = 0;
+        this.isDraw = false;
+    }
+}

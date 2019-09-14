@@ -13,7 +13,26 @@
 
             <!-- matches -->
             <div class="col-sm-4">
-                
+                <h3>Matches</h3>
+                <table class="table table-bordered table-sm">
+                    <tbody>
+                        <tr *ngFor="let m of matches">
+                            <td>
+                                <div>{{m.fighter1Name}}</div>
+                                <button class="fightResult btn {{getTextForResult(m, m.fighter1ID)}}" (click)="resolveWinner(m, m.fighter1ID, m.fighter1Name)" [disabled]="isFightResolved(m)">{{getTextForResult(m, m.fighter1ID)}}</button>
+                                <span style="font-size: small; margin-left: 10px;">{{m.fighter1Odds | number:'1.2-2'}}</span>
+                            </td>
+                            <td>
+                                <div>{{m.fighter2Name}}</div>
+                                <button class="fightResult btn {{getTextForResult(m, m.fighter2ID)}}" (click)="resolveWinner(m, m.fighter2ID, m.fighter2Name)" [disabled]="isFightResolved(m)">{{getTextForResult(m, m.fighter2ID)}}</button>
+                                <span style="font-size: small; margin-left: 10px;">{{m.fighter2Odds | number:'1.2-2'}}</span>
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <button class="fightResult btn TBD" (click)="resolveDraw(m)" [disabled]="isFightResolved(m)">Draw</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
