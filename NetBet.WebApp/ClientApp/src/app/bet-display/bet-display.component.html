@@ -24,10 +24,10 @@
             <td width="15%" class="stakeOddsCell" [style.color]="calculateResult(b) < 0 ? 'red' : 'black'">{{calculateResult(b) | currency}}</td>
         </tr>
         <tr>
+            <td><strong>Totals</strong></td>
+            <td class="stakeOddsCell">{{calculateTotalStake() | currency}}</td>
             <td></td>
             <td></td>
-            <td></td>
-            <td><strong>Total</strong></td>
             <td class="stakeOddsCell" [style.color]="calculateAllResults() < 0 ? 'red' : 'black'">{{calculateAllResults() | currency}}</td>
         </tr>
     </tbody>

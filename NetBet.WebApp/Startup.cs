@@ -22,7 +22,7 @@ namespace NetBet.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            Db.ConnectionString = "Server=localhost\\SQLEXPRESS; Database=NetBetDbTest; Integrated Security=true;";
+            Db.ConnectionString = "Server=localhost\\SQLEXPRESS; Database=NetBetDb; Integrated Security=true;";
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

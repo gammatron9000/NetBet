@@ -62,7 +62,7 @@
                                 <td width="15%" class="stakeOddsCell"><span [hidden]="isParlay">{{b.odds | number:'1.2-2'}}</span></td>
                                 <td width="20%" class="stakeOddsCell"><span [hidden]="isParlay">{{calculateToWin(b) | currency}}</span></td>
                                 <td width="5%">
-                                    <button class="btn btn-sm btn-light" type="button" (click)="deleteBetFromSlip(b)">
+                                    <button class="btn btn-sm btn-light" type="button" (click)="deleteBetFromSlip(b)" tabindex="999">
                                         <fa-icon [icon]="faTimes" style="color: red;"></fa-icon>
                                     </button>
                                 </td>

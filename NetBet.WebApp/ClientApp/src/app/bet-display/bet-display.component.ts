@@ -124,4 +124,10 @@ export class BetDisplayComponent implements OnChanges {
         this.displayBets.forEach((item) => total += this.calculateResult(item));
         return total;
     }
+
+    calculateTotalStake() {
+        let total = 0
+        this.displayBets.forEach((item) => total += item.totalStake);
+        return total;
+    }
 }

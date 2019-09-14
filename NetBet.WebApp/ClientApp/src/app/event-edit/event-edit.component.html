@@ -26,7 +26,7 @@
                         <td width="7%"><h2>VS</h2></td>
                         <td width="30%"><input [(ngModel)]="m.fighter2Name" type="text" class="form-control" name="name{{m.fighter2Name}}" /></td>
                         <td width="10%"><input [(ngModel)]="m.fighter2Odds" type="number" step="0.01" class="form-control" name="odds{{m.fighter2Odds}}" /></td>
-                        <td width="7%"><button class="btn btn-danger" type="button" (click)="deleteMatch(m)">X</button></td>
+                        <td width="7%"><button class="btn btn-danger" type="button" (click)="deleteMatch(m)" tabindex="999">X</button></td>
                     </tr>
                 </tbody>
             </table>
