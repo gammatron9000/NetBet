@@ -63,7 +63,11 @@ export class BetDisplayComponent implements OnChanges {
 
     getParlayOdds(bets: PrettyBet[]) {
         if (bets.length > 0) {
-            let allOdds = bets.map(x => x.odds);
+            // ignore push bets from this calculation
+            let nonPush = bets.filter(x => this.mapResultCodeToString(x.result) !== 'PUSH');
+            if (nonPush.length < 1) { return 0.0; }
+
+            let allOdds = nonPush.map(x => x.odds);
             const reducer = (accumulator, currentValue) => accumulator * currentValue;
             return allOdds.reduce(reducer);
         }
@@ -72,7 +76,11 @@ export class BetDisplayComponent implements OnChanges {
 
     calculateExistingParlayToWin(bets: PrettyBet[], stake: number) {
         if (bets.length > 0) {
-            let allOdds = bets.map(x => x.odds);
+            // ignore push bets from this calculation
+            let nonPush = bets.filter(x => this.mapResultCodeToString(x.result) !== 'PUSH');
+            if (nonPush.length < 1) { return 0.0; }
+
+            let allOdds = nonPush.map(x => x.odds);
             const reducer = (accumulator, currentValue) => accumulator * currentValue;
             let parlayOdds = allOdds.reduce(reducer);
             let result = (parlayOdds - 1.00) * stake;
@@ -114,9 +122,9 @@ export class BetDisplayComponent implements OnChanges {
     calculateResult(b: BetDisplay) {
         let fullResult = this.determineFullBetResult(b);
         if (fullResult === 'LOSE') { return 0 - b.totalStake; }
-        if (fullResult === 'WIN') { return b.totalStake + b.totalToWin; }
-        if (fullResult === 'PUSH') { return b.totalStake; }
-        else return 0;
+        if (fullResult === 'WIN') { return b.totalToWin; }
+        if (fullResult === 'PUSH') { return 0; }
+        else return 0 - b.totalStake;
     }
 
     calculateAllResults() {
