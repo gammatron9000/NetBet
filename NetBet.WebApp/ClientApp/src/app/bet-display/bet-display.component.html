@@ -1,7 +1,7 @@
-<table class="table table-bordered table-sm">
+<table class="table table-sm">
     <thead>
         <tr>
-            <th width="40%" class="stakeOddsCell">Name</th>
+            <th width="40%">Name</th>
             <th width="15%" class="stakeOddsCell">Stake</th>
             <th width="15%" class="stakeOddsCell">Odds</th>
             <th width="15%" class="stakeOddsCell">To Win</th>
@@ -9,7 +9,9 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let b of displayBets" style="background-color:pale" [style.background-color]="getFullBetBgColor(b)">
+        <tr *ngFor="let b of displayBets"
+            [style.border]="betShouldHighlight(b) ? '5px solid gold' : ''"
+            [style.background-color]="getFullBetBgColor(b)">
             <td width="40%">
                 <div *ngFor="let f of b.fightersAndResults">
                     <small>{{f.fighterName}}</small>

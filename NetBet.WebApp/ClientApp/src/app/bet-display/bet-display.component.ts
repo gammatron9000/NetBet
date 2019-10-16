@@ -10,6 +10,7 @@ import { faPlus, faTimes, faCheck, faHandPaper } from '@fortawesome/free-solid-s
 export class BetDisplayComponent implements OnChanges {
 
     @Input() bets: PrettyBet[] = [];
+    @Input() highlightedMatchId: number = 0;
     public displayBets: BetDisplay[] = [];
     public faTimes = faTimes;
     public faCheck = faCheck;
@@ -54,7 +55,7 @@ export class BetDisplayComponent implements OnChanges {
         display.parlayID = key;
         display.fightersAndResults =
             bets.map(b =>
-                new BetDisplayNameAndResult(b.fighterName, this.mapResultCodeToString(b.result)));
+                new BetDisplayNameAndResult(b.fighterName, this.mapResultCodeToString(b.result), b.matchID));
         display.totalStake = firstStake;
         display.totalOdds = context.getParlayOdds(bets);
         display.totalToWin = context.calculateExistingParlayToWin(bets, firstStake);
@@ -137,5 +138,14 @@ export class BetDisplayComponent implements OnChanges {
         let total = 0
         this.displayBets.forEach((item) => total += item.totalStake);
         return total;
+    }
+
+    betShouldHighlight(b: BetDisplay) {
+        //let fullResult = this.determineFullBetResult(b);
+        //if (fullResult !== '') { return false; }
+
+        let allMatches = b.fightersAndResults.map(x => x.matchID);
+        if (allMatches.includes(this.highlightedMatchId)) { return true; }
+        else { return false; }
     }
 }

@@ -167,9 +167,11 @@ export class PlaceBetDto {
 export class BetDisplayNameAndResult {
     public fighterName: string;
     public result: string;
-    constructor(name: string, result: string) {
+    public matchID: number;
+    constructor(name: string, result: string, matchid: number) {
         this.fighterName = name;
         this.result = result;
+        this.matchID = matchid;
     }
 }
 

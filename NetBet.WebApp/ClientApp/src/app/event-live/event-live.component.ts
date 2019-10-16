@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { HttpClient } from '@angular/common/http';
 import { PrettyBet, SeasonPlayer, EventWithPrettyMatches, NbEvent, PrettyMatch, ResolveMatchDto } from '../models';
+import { faStar } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-event-live',
@@ -16,6 +17,8 @@ export class EventLiveComponent {
     public allBetsForEvent: PrettyBet[] = [];
     public evnt: NbEvent = new NbEvent();
     public matches: PrettyMatch[] = [];
+    public faStar = faStar;
+    public highlightedMatchId: number = 0;
 
     constructor(private route: ActivatedRoute, public http: HttpClient, private toastr: ToastrService) {
         this.eventID = Number(this.route.snapshot.paramMap.get('eventid'));
@@ -92,6 +95,11 @@ export class EventLiveComponent {
             this.toastr.error('error');
             console.error('error resolving match: ', error);
         });
+    }
 
+    setHighlightedMatch(m: PrettyMatch) {
+        if (m.id === this.highlightedMatchId)
+        { this.highlightedMatchId = 0; }
+        else { this.highlightedMatchId = m.id; }
     }
 }

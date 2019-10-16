@@ -7,7 +7,7 @@
             <div class="col-sm-8">
                 <div *ngFor="let b of allBetsForEvent | groupBy:'playerName'">
                     <h4>{{b.key}}</h4>
-                    <bet-display [bets]="b.value"></bet-display>
+                    <bet-display [bets]="b.value" [highlightedMatchId]="highlightedMatchId"></bet-display>
                 </div>
             </div>
 
@@ -17,6 +17,9 @@
                 <table class="table table-bordered table-sm">
                     <tbody>
                         <tr *ngFor="let m of matches">
+                            <td style="vertical-align: middle;">
+                                <fa-icon (click)="setHighlightedMatch(m)" [icon]="faStar" [style.color]="m.id === highlightedMatchId ? 'gold' : 'darkgrey'"></fa-icon>
+                            </td>
                             <td>
                                 <div>{{m.fighter1Name}}</div>
                                 <button class="fightResult btn {{getTextForResult(m, m.fighter1ID)}}" (click)="resolveWinner(m, m.fighter1ID, m.fighter1Name)" [disabled]="isFightResolved(m)">{{getTextForResult(m, m.fighter1ID)}}</button>
