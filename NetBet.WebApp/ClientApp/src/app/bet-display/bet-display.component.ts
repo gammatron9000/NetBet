@@ -103,11 +103,12 @@ export class BetDisplayComponent implements OnChanges {
         let results = b.fightersAndResults.map(x => x.result);
         let anyLose = results.find(x => x === 'LOSE');
         if (anyLose) { return 'LOSE'; } //if any are losses, the whole bet is a loss
+        let wins = results.filter(x => x === 'WIN');
+        if (wins.length === results.length) { return 'WIN'; }
         let winPushCount = results.filter(x => x === 'WIN' || x === 'PUSH');
-        if (winPushCount.length === results.length) { // all bets have been resolved
-            let anyWin = results.find(x => x === 'WIN');
-            if (anyWin) { return 'WIN'; }
-            else return 'PUSH'; // all pushes
+        if (winPushCount.length === results.length) { 
+            // if there are only wins and pushes and all bets have been resolved, refund
+            return 'PUSH';
         }
         return '';
     }
@@ -141,9 +142,6 @@ export class BetDisplayComponent implements OnChanges {
     }
 
     betShouldHighlight(b: BetDisplay) {
-        //let fullResult = this.determineFullBetResult(b);
-        //if (fullResult !== '') { return false; }
-
         let allMatches = b.fightersAndResults.map(x => x.matchID);
         if (allMatches.includes(this.highlightedMatchId)) { return true; }
         else { return false; }
